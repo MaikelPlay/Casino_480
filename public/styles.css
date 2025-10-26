@@ -1,0 +1,208 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Prevenir scroll horizontal */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #111;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Asegurar que el cuerpo ocupe al menos toda la altura */
+}
+
+.game-container {
+    background-image: url('assets/tapete.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: clamp(10px, 2vw, 20px);
+    border-radius: 15px;
+    border: 3px solid #a5832a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    text-align: center;
+    width: 98vw; /* Ocupar casi todo el ancho de la pantalla */
+    max-width: 1400px; /* Pero no más de 1400px en pantallas grandes */
+    min-height: 98vh; /* Ocupar casi toda la altura */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuir el espacio */
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    margin: 0;
+}
+
+h2 {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin: 10px 0;
+}
+
+.messages {
+    min-height: 30px;
+    font-size: clamp(1rem, 2.5vw, 1.4em);
+    font-weight: bold;
+    color: #ffc107;
+}
+
+.player-area {
+    margin: clamp(10px, 2vh, 20px) 0;
+    min-height: 150px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    flex-grow: 1; /* Permitir que crezca */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-area {
+    position: relative;
+    min-height: clamp(140px, 20vh, 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    width: clamp(70px, 10vw, 90px);
+    height: clamp(100px, 15vw, 130px);
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 8px;
+    font-size: clamp(1rem, 2.5vw, 1.2em);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    bottom: 10px;
+    transition: transform 0.3s ease-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.card.hidden {
+    background-color: blue;
+    color: blue;
+}
+
+.actions, .betting-area {
+    padding: 10px 0;
+}
+
+.actions button, #bet-button {
+    font-size: clamp(0.9rem, 2vw, 1.1em);
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.actions button:disabled, #bet-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+#new-round-button {
+    background-color: #007bff;
+    color: white;
+}
+
+#hit-button, #stand-button {
+    background-color: #ffc107;
+    color: #1a3a1a;
+}
+
+.balance {
+    font-size: clamp(1rem, 2.5vw, 1.2em);
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.bet-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+}
+
+.bet-controls button {
+    font-size: 1.2em;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ffc107;
+    background-color: #1a3a1a;
+    color: #ffc107;
+    cursor: pointer;
+}
+
+.bet-controls .current-bet {
+    font-size: clamp(1rem, 2.5vw, 1.2em);
+    font-weight: bold;
+}
+
+#bet-button {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 768px) {
+    .game-container {
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+
+    .bet-controls {
+        flex-direction: column;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 80%;
+        margin: 5px auto; /* Centrar botones */
+    }
+}
+
+/* Animación de pulso para el botón de nueva ronda */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px 20px rgba(0, 123, 255, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+    }
+}
+
+#new-round-button.animated-button {
+    animation: pulse 2s infinite;
+}
