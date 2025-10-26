@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2020",
+
+    // Other Outputs
+    "sourceMap": true,
+    "outDir": "dist",
+  },
+  "include": ["src/**/*"],
+}

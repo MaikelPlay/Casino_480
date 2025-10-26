@@ -1,0 +1,24 @@
+git init
+gitignore(archivo para ignorar)
+git add . (añadir todo)
+git commit -m ""
+git status
+git log
+git checkout -b develop (b de branch, crear rama)
+git checkout -b feat/nuevoParrafo 
+git checkout develop (cambiar de rama)
+git merge nombre (traer los cambios a otra rama)
+git branch -d nombre (eliminar)
+git remote add origin https://github.com/MaikelPlay/pruebaInicial.git (git remoto)
+ssh-keygen -t ed25519 -C "maikelcorreoelectronico@gmail.com" para generar clave shh
+Get-Service ssh-agent (para ver estado) 
+Set-Service -Name ssh-agent -StartupType Automatic (Iniciar)
+Start-Service ssh-agent (Iniciar)
+Get-Service ssh-agent (para ver estado) 
+Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub (abrir clave y copiar contenido)
+Ir a GitHub y pegar contenido en settings, ssh key, new ssh key, y pegar en key
+ssh -T git@github.com (apretar yes para repositorio remoto)
+ir al repositorio en github, poner conectar ssh en vez de https
+git remote add origin git@github.com:MaikelPlay/pruebaInicial.git en terminal de visual studio dentro de la carpeta
+git remote -v (visualizar)
+git push origin develop
