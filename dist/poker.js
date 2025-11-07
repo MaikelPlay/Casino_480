@@ -5,22 +5,25 @@ class Carta {
         this.rango = rango;
         this.valor = valor;
     }
+    getImagen() {
+        return `assets/Baraja/${this.palo}_${this.rango}.png`;
+    }
 }
 class Baraja {
     constructor() {
         this.cartas = [];
-        this.palos = ['Corazones', 'Diamantes', 'Picas', 'Tréboles'];
-        this.rangos = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        this.palos = ['corazones', 'rombo', 'picas', 'trebol'];
+        this.rangos = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'as'];
         this.reiniciar();
     }
     getValor(rango) {
-        if (rango === 'A')
+        if (rango === 'as')
             return 14;
-        if (rango === 'K')
+        if (rango === 'k')
             return 13;
-        if (rango === 'Q')
+        if (rango === 'q')
             return 12;
-        if (rango === 'J')
+        if (rango === 'j')
             return 11;
         return parseInt(rango);
     }
@@ -87,17 +90,17 @@ class InterfazPoker {
     }
     repartirCarta(carta, jugadorIndex, esComunitaria, totalCartas) {
         const contenedor = esComunitaria ? this.communityCardsContainer : document.getElementById(`player-cards-${jugadorIndex}`);
-        const cartaDiv = document.createElement('div');
-        cartaDiv.classList.add('card');
+        const cartaImg = document.createElement('img');
+        cartaImg.classList.add('card');
+        cartaImg.src = carta.getImagen();
         // Animación de reparto
-        cartaDiv.style.opacity = '0';
-        cartaDiv.style.transform = 'translateY(-100px)';
+        cartaImg.style.opacity = '0';
+        cartaImg.style.transform = 'translateY(-100px)';
         setTimeout(() => {
-            cartaDiv.style.opacity = '1';
-            cartaDiv.style.transform = 'translateY(0)';
+            cartaImg.style.opacity = '1';
+            cartaImg.style.transform = 'translateY(0)';
         }, (jugadorIndex * 100) + (totalCartas * 50));
-        cartaDiv.textContent = `${carta.rango}${carta.palo.charAt(0)}`;
-        contenedor.appendChild(cartaDiv);
+        contenedor.appendChild(cartaImg);
     }
     actualizarBote(bote) {
         this.potDiv.textContent = `Bote: $${bote}`;

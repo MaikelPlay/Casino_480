@@ -5,19 +5,21 @@ class Carta {
         this.rango = rango;
         this.valor = valor;
     }
-    getImagen() { return `${this.palo}_${this.rango}.png`; }
+    getImagen() {
+        return `assets/Baraja/${this.palo}_${this.rango}.png`;
+    }
 }
 class Baraja {
     constructor() {
         this.cartas = [];
-        this.palos = ['Corazones', 'Diamantes', 'Picas', 'Tréboles'];
-        this.rangos = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        this.palos = ['corazones', 'rombo', 'picas', 'trebol'];
+        this.rangos = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'as'];
         this.reiniciar();
     }
     getValor(rango) {
-        if (rango === 'A')
+        if (rango === 'as')
             return 11;
-        if (['K', 'Q', 'J'].includes(rango))
+        if (['k', 'q', 'j'].includes(rango))
             return 10;
         return parseInt(rango);
     }
@@ -53,7 +55,7 @@ class Jugador {
     }
     calcularPuntuacion() {
         this.puntuacion = 0;
-        let ases = this.mano.filter(c => c.rango === 'A').length;
+        let ases = this.mano.filter(c => c.rango === 'as').length;
         this.puntuacion = this.mano.reduce((total, carta) => total + carta.valor, 0);
         while (this.puntuacion > 21 && ases > 0) {
             this.puntuacion -= 10;
@@ -105,27 +107,27 @@ class InterfazUsuario {
     }
     mostrarCarta(carta, jugadorIndex, esCrupier, oculta = false, indice = 0, totalCartas = 1) {
         const contenedor = esCrupier ? this.crupierCartasDiv : document.getElementById(`player-cards-${jugadorIndex}`);
-        const cartaDiv = document.createElement('div');
-        cartaDiv.classList.add('card');
+        const cartaImg = document.createElement('img');
+        cartaImg.classList.add('card');
+        cartaImg.src = oculta ? 'assets/Baraja/atras.png' : carta.getImagen();
         const anguloPorCarta = 5;
         const angulo = (indice - (totalCartas - 1) / 2) * anguloPorCarta;
         const desplazamientoX = (indice - (totalCartas - 1) / 2) * 50;
         const transformacionBase = `rotate(${angulo}deg) translateX(${desplazamientoX}px)`;
-        cartaDiv.style.transform = transformacionBase;
+        cartaImg.style.transform = transformacionBase;
         if (!esCrupier && !oculta) {
-            cartaDiv.addEventListener('mouseenter', () => {
-                cartaDiv.style.transform = `${transformacionBase} translateY(-20px) scale(1.1)`;
-                cartaDiv.style.zIndex = '100';
+            cartaImg.addEventListener('mouseenter', () => {
+                cartaImg.style.transform = `${transformacionBase} translateY(-20px) scale(1.1)`;
+                cartaImg.style.zIndex = '100';
             });
-            cartaDiv.addEventListener('mouseleave', () => {
-                cartaDiv.style.transform = transformacionBase;
-                cartaDiv.style.zIndex = indice.toString();
+            cartaImg.addEventListener('mouseleave', () => {
+                cartaImg.style.transform = transformacionBase;
+                cartaImg.style.zIndex = indice.toString();
             });
         }
-        cartaDiv.textContent = oculta ? '??' : `${carta.rango} de ${carta.palo}`;
         if (oculta)
-            cartaDiv.classList.add('hidden');
-        contenedor.appendChild(cartaDiv);
+            cartaImg.classList.add('hidden');
+        contenedor.appendChild(cartaImg);
     }
     actualizarPuntuaciones(puntuaciones, puntuacionCrupier) {
         puntuaciones.forEach((puntuacion, i) => {

@@ -1,26 +1,28 @@
-
 // Tipos
-type Palo = 'Corazones' | 'Diamantes' | 'Picas' | 'Tréboles';
-type Rango = '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K' | 'A';
+type Palo = 'corazones' | 'rombo' | 'picas' | 'trebol';
+type Rango = '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'j' | 'q' | 'k' | 'as';
 
 // --- CLASES DE LA LÓGICA DEL JUEGO ---
 
 class Carta {
     constructor(public palo: Palo, public rango: Rango, public valor: number) {}
+    public getImagen(): string {
+        return `assets/Baraja/${this.palo}_${this.rango}.png`;
+    }
 }
 
 class Baraja {
     private cartas: Carta[] = [];
-    private palos: Palo[] = ['Corazones', 'Diamantes', 'Picas', 'Tréboles'];
-    private rangos: Rango[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    private palos: Palo[] = ['corazones', 'rombo', 'picas', 'trebol'];
+    private rangos: Rango[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'as'];
 
     constructor() { this.reiniciar(); }
 
     private getValor(rango: Rango): number {
-        if (rango === 'A') return 14;
-        if (rango === 'K') return 13;
-        if (rango === 'Q') return 12;
-        if (rango === 'J') return 11;
+        if (rango === 'as') return 14;
+        if (rango === 'k') return 13;
+        if (rango === 'q') return 12;
+        if (rango === 'j') return 11;
         return parseInt(rango);
     }
 
@@ -97,19 +99,19 @@ class InterfazPoker {
 
     public repartirCarta(carta: Carta, jugadorIndex: number, esComunitaria: boolean, totalCartas: number): void {
         const contenedor = esComunitaria ? this.communityCardsContainer : document.getElementById(`player-cards-${jugadorIndex}`)!;
-        const cartaDiv = document.createElement('div');
-        cartaDiv.classList.add('card');
+        const cartaImg = document.createElement('img');
+        cartaImg.classList.add('card');
+        cartaImg.src = carta.getImagen();
         
         // Animación de reparto
-        cartaDiv.style.opacity = '0';
-        cartaDiv.style.transform = 'translateY(-100px)';
+        cartaImg.style.opacity = '0';
+        cartaImg.style.transform = 'translateY(-100px)';
         setTimeout(() => {
-            cartaDiv.style.opacity = '1';
-            cartaDiv.style.transform = 'translateY(0)';
+            cartaImg.style.opacity = '1';
+            cartaImg.style.transform = 'translateY(0)';
         }, (jugadorIndex * 100) + (totalCartas * 50));
 
-        cartaDiv.textContent = `${carta.rango}${carta.palo.charAt(0)}`;
-        contenedor.appendChild(cartaDiv);
+        contenedor.appendChild(cartaImg);
     }
 
     public actualizarBote(bote: number): void {
