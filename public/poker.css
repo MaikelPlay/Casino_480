@@ -46,10 +46,26 @@
     gap: 5px;
 }
 
-.player-area-poker .card {
-    width: 40px;
-    height: 60px;
-    font-size: 0.8rem;
+.player-area-poker .player-cards .card {
+    width: 50px;
+    height: 70px;
+}
+
+.community-cards .card {
+    width: 70px;
+    height: 100px;
+}
+
+.card {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .table-center {
@@ -61,16 +77,6 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
-}
-
-.community-cards {
-    display: flex;
-    gap: 10px;
-}
-
-.community-cards .card {
-    width: 60px;
-    height: 90px;
 }
 
 .pot {
@@ -194,60 +200,4 @@
     color: white;
     font-size: 2rem;
     cursor: pointer;
-}
-
-/* Game Setup */
-.game-setup {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-    background-image: url('assets/portadaGimini.png');
-    background-size: cover;
-    background-position: center;
-}
-
-.setup-container {
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 40px;
-    border-radius: 15px;
-    border: 2px solid #ffd700;
-    text-align: center;
-    color: white;
-    font-family: 'Cinzel', serif;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-}
-
-.setup-container h2 {
-    color: #ffd700;
-    margin-bottom: 30px;
-    font-size: 2.5rem;
-}
-
-.form-group {
-    margin-bottom: 25px;
-    text-align: left;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1.1rem;
-    font-family: 'Playfair Display', serif;
-}
-
-#start-game-button.btn {
-    background: linear-gradient(145deg, #b22222, #800000);
-    color: white;
-    border: 2px solid #ff6347;
 }

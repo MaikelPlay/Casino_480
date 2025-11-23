@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Carta } from '../../src/common/Card.js';
 import { createDeck, shuffle, draw } from './deck.js';
 import { PokerPlayer, EvalResult, GamePhase } from './types.js';

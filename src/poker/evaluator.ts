@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Carta } from '../../src/common/Card.js';
 import { EvalResult, HandRank } from './types.js';
 

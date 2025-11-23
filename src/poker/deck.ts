@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Carta, Palo, Rango } from '../../src/common/Card.js';
 
 const PALOS: Palo[] = ['corazones', 'rombo', 'picas', 'trebol'];

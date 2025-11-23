@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Carta } from '../../src/common/Card.js';
 import { PokerPlayer } from './types.js';
 
@@ -51,7 +50,7 @@ export class PokerUI {
 
     showTable(community: Carta[], players: PokerPlayer[], pot: number) {
         if (this.communityCardsContainer) {
-            this.communityCardsContainer.innerHTML = community.map(c => `<span class="card">${c.rango}${c.palo[0]}</span>`).join('');
+            this.communityCardsContainer.innerHTML = community.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
         }
         if (this.potDiv) this.potDiv.textContent = `${this.translations.potLabel}: $${pot}`;
         
@@ -64,7 +63,7 @@ export class PokerUI {
                 
                 const cardsDiv = document.getElementById(`player-cards-${i}`);
                 if (cardsDiv) {
-                    cardsDiv.innerHTML = player.hand.map(c => `<span class="card">${c.rango}${c.palo[0]}</span>`).join('');
+                    cardsDiv.innerHTML = player.hand.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
                 }
             }
         });

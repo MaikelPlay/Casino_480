@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { PokerPlayer, ActionType } from './types.js';
 import { Carta } from '../../src/common/Card.js';
 import { evaluateHand } from './evaluator.js';

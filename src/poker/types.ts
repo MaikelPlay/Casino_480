@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Carta } from '../../src/common/Card.js';
 import { Jugador } from '../../src/common/Player.js';
 
@@ -27,7 +26,7 @@ export enum GamePhase {
 export type ActionType = 'fold'|'check'|'call'|'raise'|'allin';
 
 export class PokerPlayer extends Jugador {
-  id: number;
+  id: string;
   name: string;
   isHuman: boolean;
   stack: number; // chips available
@@ -37,8 +36,9 @@ export class PokerPlayer extends Jugador {
   hand: Carta[] = []; // Added for UI purposes, to display player's best hand
 
   constructor(id: number, name: string, isHuman: boolean, stack: number) {
-    super(name); // Call Jugador's constructor with the name
-    this.id = id;
+    const stringId = `player-${id}`;
+    super(stringId); // Call Jugador's constructor with the string id
+    this.id = stringId;
     this.name = name;
     this.isHuman = isHuman;
     this.stack = stack;
