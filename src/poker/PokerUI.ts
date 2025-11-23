@@ -50,7 +50,8 @@ export class PokerUI {
 
     showTable(community: Carta[], players: PokerPlayer[], pot: number) {
         if (this.communityCardsContainer) {
-            this.communityCardsContainer.innerHTML = community.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
+            const communityHTML = community.map(c => `<div class="card"><img src="assets/Baraja/${c.palo}_${c.rango}.png" alt="${c.toString()}"></div>`).join('');
+            this.communityCardsContainer.innerHTML = communityHTML;
         }
         if (this.potDiv) this.potDiv.textContent = `${this.translations.potLabel}: $${pot}`;
         
@@ -61,9 +62,13 @@ export class PokerUI {
                 const balanceDiv = playerArea.querySelector('.player-balance');
                 if (balanceDiv) balanceDiv.textContent = `${this.translations.playerBalanceLabel}${player.stack}`;
                 
+                const betDiv = playerArea.querySelector('.player-bet');
+                if (betDiv) betDiv.textContent = `Bet: $${player.currentBet}`;
+
                 const cardsDiv = document.getElementById(`player-cards-${i}`);
                 if (cardsDiv) {
-                    cardsDiv.innerHTML = player.hand.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
+                    const handHTML = player.hand.map(c => `<div class="card"><img src="assets/Baraja/${c.palo}_${c.rango}.png" alt="${c.toString()}"></div>`).join('');
+                    cardsDiv.innerHTML = handHTML;
                 }
             }
         });
@@ -208,6 +213,7 @@ export class PokerUI {
             playerArea.innerHTML = `
                                 <div class="player-name">${player.name}</div>
                                 <div class="player-balance">${this.translations.playerBalanceLabel}${player.stack}</div>
+                                <div class="player-bet"></div>
                                 <div id="player-cards-${i}" class="player-cards"></div>
                         `;
             this.playersContainer!.appendChild(playerArea);
