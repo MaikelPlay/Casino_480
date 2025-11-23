@@ -4,7 +4,7 @@
     max-width: 1200px;
     height: 95vh;
     max-height: 800px;
-    border-radius: 100px; /* Mesa más ovalada */
+    border-radius: 100px;
 }
 
 .players-container-poker {
@@ -28,10 +28,17 @@
     border-radius: 10px;
     padding: 5px;
     color: white;
+    transition: all 0.3s ease;
+}
+
+.player-area-poker.human-player {
+    border-color: #00ff00;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
 }
 
 .player-area-poker .player-name {
     font-weight: bold;
+    font-family: 'Cinzel', serif;
 }
 
 .player-area-poker .player-cards {
@@ -70,9 +77,10 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: #ffd700;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.7);
     padding: 10px 20px;
     border-radius: 10px;
+    border: 1px solid #ffd700;
 }
 
 .poker-actions {
@@ -82,6 +90,40 @@
     transform: translateX(-50%);
     display: flex;
     gap: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.poker-actions button {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+#fold-button {
+    background: linear-gradient(145deg, #b22222, #800000);
+    color: white;
+    border-color: #ff6347;
+}
+
+#check-button, #call-button {
+    background: linear-gradient(145deg, #228B22, #006400);
+    color: white;
+    border-color: #32CD32;
+}
+
+#raise-button {
+    background: linear-gradient(145deg, #007bff, #0056b3);
+    color: white;
+    border-color: #007bff;
 }
 
 .raise-container {
@@ -91,7 +133,121 @@
 }
 
 .raise-container input {
-    width: 80px;
+    width: 100px;
+    font-size: 1.2rem;
+    padding: 8px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    color: #fff;
+    border-radius: 5px;
+}
+
+/* Rules Panel */
+.rules-toggle-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 1rem;
-    padding: 5px;
+    font-family: 'Cinzel', serif;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: -380px;
+    width: 350px;
+    height: 100%;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+    border-right: 2px solid #ffd700;
+}
+
+.side-panel.open {
+    left: 0;
+}
+
+.side-panel h2 {
+    margin-top: 0;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+}
+
+.side-panel .close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* Game Setup */
+.game-setup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background-image: url('assets/portadaGimini.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.setup-container {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border-radius: 15px;
+    border: 2px solid #ffd700;
+    text-align: center;
+    color: white;
+    font-family: 'Cinzel', serif;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.setup-container h2 {
+    color: #ffd700;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+}
+
+#start-game-button.btn {
+    background: linear-gradient(145deg, #b22222, #800000);
+    color: white;
+    border: 2px solid #ff6347;
 }
