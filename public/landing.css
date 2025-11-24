@@ -24,6 +24,12 @@
     animation: fadeInDown 1.5s ease-out;
 }
 
+#ai-name {
+    animation: fadeInDown 1.5s ease-out 0.2s backwards;
+    margin-top: -1.5rem; /* Adjust margin to bring it closer to the title */
+    margin-bottom: 2rem; /* Ensure proper spacing with next element */
+}
+
 /* Language selector (discreet, top-left) */
 .lang-selector {
     position: absolute;
@@ -82,6 +88,11 @@
 .balance-selection {
     margin-bottom: 3rem;
     animation: fadeInUp 1.5s ease-out 1s backwards;
+}
+
+.name-selection {
+    margin-bottom: 3rem;
+    animation: fadeInUp 1.5s ease-out 1.1s backwards;
 }
 
 .balance-selection label {
