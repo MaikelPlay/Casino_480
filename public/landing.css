@@ -99,7 +99,7 @@
     display: inline-block;
 }
 
-.balance-selection input {
+.balance-selection input, .name-selection input {
     padding: 0.8rem;
     font-size: 1.5rem;
     width: 200px;
