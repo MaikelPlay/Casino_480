@@ -1,5 +1,4 @@
 import { Carta } from '../../src/common/Card.js';
-import { Jugador } from '../../src/common/Player.js';
 
 export enum HandRank {
   HighCard = 0,
@@ -23,32 +22,10 @@ export enum GamePhase {
     SHOWDOWN
 }
 
-export type ActionType = 'fold'|'check'|'call'|'raise'|'allin';
-
-export class PokerPlayer extends Jugador {
-  id: string;
-  name: string;
-  isHuman: boolean;
-  stack: number; // chips available
-  hole: Carta[] = []; // two cards
-  inHand: boolean; // folded or not
-  currentBet: number; // amount put in current betting round
-  hand: Carta[] = []; // Added for UI purposes, to display player's best hand
-
-  constructor(id: number, name: string, isHuman: boolean, stack: number) {
-    const stringId = `player-${id}`;
-    super(stringId); // Call Jugador's constructor with the string id
-    this.id = stringId;
-    this.name = name;
-    this.isHuman = isHuman;
-    this.stack = stack;
-    this.inHand = true;
-    this.currentBet = 0;
-  }
-}
+export type ActionType = 'fold'|'check'|'call'|'raise'|'allin'|'bet';
 
 export interface BettingAction {
-  playerId: number;
+  playerId: string;
   type: ActionType;
   amount?: number;
 }
@@ -59,3 +36,4 @@ export interface EvalResult {
   description: string;
   bestHand: Carta[]; // The actual 5 cards that form the best hand
 }
+

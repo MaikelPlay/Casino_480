@@ -35,17 +35,16 @@
         <button id="close-rules" class="close-button">Cerrar</button>
     </div>
 
-    <div class="game-container poker-table">
-        <h1>Poker Texas Hold'em</h1>
-        
-        <div id="messages" class="messages"></div>
-
-        <div class="table-center">
-            <div id="community-cards" class="community-cards"></div>
-            <div id="pot" class="pot">Bote: $0</div>
+    <div class="poker-table-container">
+        <div class="poker-table-oval">
+            <div id="players-container" class="players-container-poker">
+                <!-- Player areas will be dynamically generated here -->
+            </div>
+            <div class="table-center">
+                <div id="community-cards" class="community-cards"></div>
+                <div id="pot" class="pot">Bote: $0</div>
+            </div>
         </div>
-
-        <div id="players-container" class="players-container-poker"></div>
 
         <div class="actions poker-actions">
             <button id="fold-button">Retirarse</button>
@@ -56,6 +55,8 @@
                 <input type="number" id="raise-amount" value="20" min="20" step="10">
             </div>
         </div>
+        
+        <div id="messages" class="messages"></div>
     </div>
 </body>
 </html>
