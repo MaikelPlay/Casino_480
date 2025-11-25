@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlLang = urlParams.get('lang');
     const lang = urlLang || window.localStorage.getItem('lang') || ((navigator.languages && navigator.languages[0]) || navigator.language || 'es').toString().slice(0,2).toLowerCase();
 
-    // Instantiate UI and Game classes
+    // Instanciar las clases de UI y Juego
     const blackjackUI = new BlackjackUI();
     new BlackjackGame(blackjackUI, numeroJugadores, saldoInicial, nombreJugador, lang);
 });

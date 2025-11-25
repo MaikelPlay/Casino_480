@@ -8,8 +8,8 @@ import { PokerUI } from './PokerUI.js';
 
 export interface Pot {
     amount: number;
-    eligiblePlayers: string[]; // IDs of players who contributed to this pot and are still in hand
-    allInAmount?: number; // The amount at which a player went all-in to create this pot
+    eligiblePlayers: string[]; // IDs de jugadores que contribuyeron a este bote y todavía están en la mano
+    allInAmount?: number; // La cantidad con la que un jugador fue all-in para crear este bote
 }
 
 export class PokerGame {
@@ -31,9 +31,9 @@ export class PokerGame {
         this.ui = ui;
         this.ui.setLanguage(lang);
         
-        // Human player
+        // Jugador humano
         this.players.push(new PokerPlayer('0', humanName, true, initialStack));
-        // AI player
+        // Jugador IA
         this.players.push(new PokerPlayer('1', 'IA', false, initialStack));
 
         this.ui.crearAreasDeJugador(this.players);
@@ -44,17 +44,17 @@ export class PokerGame {
     async startHand() {
         console.log('[GAME] --- Starting New Hand ---');
         this.phase = GamePhase.PRE_DEAL;
-        // Reset pots and initialize with one main pot, eligible players are those with chips
+        // Reiniciar botes e inicializar con un bote principal, los jugadores elegibles son aquellos con fichas
         this.pots = [{ amount: 0, eligiblePlayers: this.players.filter(p => p.stack > 0).map(p => p.id) }];
         this.community = [];
-        this.deck.reiniciar(); // Reset and shuffle the deck
+        this.deck.reiniciar(); // Reiniciar y barajar el mazo
         
-        // Reset player states for new hand
+        // Reiniciar estados de los jugadores para la nueva mano
         this.players.forEach(p => {
             p.resetForNewHand();
         });
 
-        // Deal hole cards
+        // Repartir cartas de mano
         this.players.forEach(p => {
             p.addHoleCard(this.deck.robar()!);
             p.addHoleCard(this.deck.robar()!);
@@ -69,8 +69,8 @@ export class PokerGame {
 
         this.phase = GamePhase.PRE_FLOP;
         console.log('[GAME] Phase -> PRE_FLOP');
-        // Determine the first player to act pre-flop (left of Big Blind)
-        let firstToActIndex = this.dealerIndex; // In heads-up, dealer (SB) acts first pre-flop
+        // Determinar el primer jugador en actuar pre-flop (a la izquierda de la Ciega Grande)
+        let firstToActIndex = this.dealerIndex; // En heads-up, el crupier (SB) actúa primero pre-flop
         this.currentPlayerIndex = firstToActIndex;
         await this.bettingRound();
     }
@@ -87,15 +87,15 @@ export class PokerGame {
         const sbPlayer = this.players[sbPlayerIndex];
         const bbPlayer = this.players[bbPlayerIndex];
     
-        // Small Blind
+        // Ciega Pequeña
         const sbAmount = Math.min(sbPlayer.stack, this.smallBlind);
-        this.makeBet(sbPlayer, sbAmount); // Calls makeBet, which then calls collectChipsFromPlayer
+        this.makeBet(sbPlayer, sbAmount); // Llama a makeBet, que luego llama a collectChipsFromPlayer
         this.ui.log(`${sbPlayer.name} posts small blind of ${sbAmount}. Stack: ${sbPlayer.stack}`);
         console.log(`[GAME] ${sbPlayer.name} posts small blind of ${sbAmount}`);
     
-        // Big Blind
+        // Ciega Grande
         const bbAmount = Math.min(bbPlayer.stack, this.bigBlind);
-        this.makeBet(bbPlayer, bbAmount); // Calls makeBet, which then calls collectChipsFromPlayer
+        this.makeBet(bbPlayer, bbAmount); // Llama a makeBet, que luego llama a collectChipsFromPlayer
         this.ui.log(`${bbPlayer.name} posts big blind of ${bbAmount}. Stack: ${bbPlayer.stack}`);
         console.log(`[GAME] ${bbPlayer.name} posts big blind of ${bbAmount}`);
     
@@ -103,8 +103,8 @@ export class PokerGame {
     }
 
     /**
-     * Handles a player committing chips to the pot.
-     * This function is crucial for managing side pots.
+     * Maneja cuando un jugador compromete fichas al bote.
+     * Esta función es crucial para gestionar los botes secundarios.
      */
     makeBet(player: PokerPlayer, totalAmountCommittedThisRound: number) {
         const chipsToCommit = totalAmountCommittedThisRound - player.currentBet;
@@ -114,12 +114,12 @@ export class PokerGame {
         const chipsBeforeBet = player.stack;
 
         player.stack -= actualChipsFromStack;
-        player.currentBet += actualChipsFromStack; // currentBet tracks total committed in current betting round
+        player.currentBet += actualChipsFromStack; // currentBet rastrea el total comprometido en la ronda de apuestas actual
 
-        // Distribute actualChipsFromStack to pots
+        // Distribuir actualChipsFromStack a los botes
         this.collectChipsFromPlayer(player, actualChipsFromStack);
 
-        if (chipsBeforeBet > 0 && player.stack === 0) { // Player just went all-in
+        if (chipsBeforeBet > 0 && player.stack === 0) { // El jugador acaba de ir all-in
             player.isAllIn = true;
             this.ui.log(`${player.name} goes all-in for ${player.currentBet}!`);
             console.log(`[GAME] ${player.name} goes all-in for ${player.currentBet}!`);
@@ -129,11 +129,11 @@ export class PokerGame {
     }
 
     private collectChipsFromPlayer(player: PokerPlayer, amount: number) {
-        // In a heads-up game without complex side pots, all chips go to the main pot
-        // The main pot is always this.pots[0]
+        // En un juego heads-up sin botes secundarios complejos, todas las fichas van al bote principal
+        // El bote principal es siempre this.pots[0]
         if (this.pots.length > 0) {
             this.pots[0].amount += amount;
-            // Ensure the player is eligible for the main pot (should always be the case if they are still in hand)
+            // Asegurarse de que el jugador es elegible para el bote principal (debería ser siempre el caso si todavía está en la mano)
             if (!this.pots[0].eligiblePlayers.includes(player.id)) {
                 this.pots[0].eligiblePlayers.push(player.id);
             }
@@ -145,36 +145,36 @@ export class PokerGame {
     async bettingRound() {
         console.log('[GAME] --- Starting Betting Round ---');
         let roundFinished = false;
-        const originalStartingPlayerIndex = this.currentPlayerIndex; // The player who starts the betting for this round
-        let playersWhoHaveActedThisRound = new Set<string>(); // Keep track of players who have made a non-blind bet/raise, or called
+        const originalStartingPlayerIndex = this.currentPlayerIndex; // El jugador que inicia las apuestas para esta ronda
+        let playersWhoHaveActedThisRound = new Set<string>(); // Mantiene un registro de los jugadores que han hecho una apuesta/subida no ciega, o han igualado
         
-        // Reset currentBet for all players who are still in hand and not all-in, if this is a new betting round
-        // For pre-flop, blinds already set currentBet. For subsequent rounds, all currentBets should be zeroed initially.
+        // Reiniciar currentBet para todos los jugadores que todavía están en la mano y no están all-in, si es una nueva ronda de apuestas
+        // Para pre-flop, las ciegas ya establecen currentBet. Para las rondas siguientes, todos los currentBets deben ser cero al principio.
         if (this.phase !== GamePhase.PRE_FLOP) {
             this.players.forEach(p => {
                 if (p.inHand && !p.isAllIn) {
                     p.currentBet = 0;
                 }
             });
-            this.lastBet = 0; // Reset lastBet as well for new rounds
+            this.lastBet = 0; // Reiniciar también lastBet para las nuevas rondas
         }
 
-        // Loop until the betting round is finished
+        // Bucle hasta que termine la ronda de apuestas
         while (!roundFinished) {
             const player = this.players[this.currentPlayerIndex];
             const otherPlayer = this.players.find(p => p.id !== player.id)!;
 
-            // Conditions to skip a player's turn:
-            // 1. Player has folded
-            // 2. Player is all-in AND has matched or exceeded the last bet
-            // 3. Only one player is left in hand
+            // Condiciones para saltar el turno de un jugador:
+            // 1. El jugador se ha retirado
+            // 2. El jugador está all-in Y ha igualado o superado la última apuesta
+            // 3. Solo queda un jugador en la mano
             if (!player.inHand || (player.isAllIn && player.currentBet >= this.lastBet)) {
                 console.log(`[GAME] ${player.name} is skipped (folded or all-in and matched/exceeded current bet).`);
                 this.moveToNextPlayer();
                 continue;
             }
 
-            // If only one player is left (the other folded), end the round
+            // Si solo queda un jugador (el otro se retiró), termina la ronda
             const playersStillInHand = this.players.filter(p => p.inHand);
             if (playersStillInHand.length <= 1) {
                 roundFinished = true;
@@ -194,51 +194,51 @@ export class PokerGame {
             
             this.handlePlayerAction(player, action);
 
-            // Update lastBet and minRaise if the player made an aggressive action
+            // Actualizar lastBet y minRaise si el jugador realizó una acción agresiva
             if (action.type === 'bet' || action.type === 'raise' || (action.type === 'allin' && player.currentBet > this.lastBet)) {
-                this.lastBet = player.currentBet; // Update lastBet to the total amount player has committed in this round
-                this.minRaise = this.lastBet - (otherPlayer.currentBet || 0); // Min raise is the amount of the last raise
-                playersWhoHaveActedThisRound.clear(); // A new aggressive action resets who has "acted" for matching purposes
+                this.lastBet = player.currentBet; // Actualizar lastBet a la cantidad total que el jugador ha comprometido en esta ronda
+                this.minRaise = this.lastBet - (otherPlayer.currentBet || 0); // La subida mínima es la cantidad de la última subida
+                playersWhoHaveActedThisRound.clear(); // Una nueva acción agresiva reinicia quién ha "actuado" para fines de igualación
             } else if (action.type === 'call' || action.type === 'check') {
                 playersWhoHaveActedThisRound.add(player.id);
             }
 
             this.moveToNextPlayer();
 
-            // Check if the round should end after an action
-            // Round ends if:
-            // 1. One player folds (checked above)
-            // 2. All active players have matched the highest bet
+            // Comprobar si la ronda debe terminar después de una acción
+            // La ronda termina si:
+            // 1. Un jugador se retira (comprobado arriba)
+            // 2. Todos los jugadores activos han igualado la apuesta más alta
             const allActivePlayers = this.players.filter(p => p.inHand);
             const allMatched = allActivePlayers.every(p => p.currentBet === this.lastBet || p.isAllIn);
             
-            // Special case for pre-flop, where blinds count as initial bets and action needs to cycle once
-            // In heads-up, after blinds, the dealer (SB) acts. If BB raises, action goes back to SB. If SB calls, round ends.
-            // If SB checks, BB acts. If BB checks, round ends.
+            // Caso especial para pre-flop, donde las ciegas cuentan como apuestas iniciales y la acción necesita ciclar una vez
+            // En heads-up, después de las ciegas, el crupier (SB) actúa. Si BB sube, la acción vuelve a SB. Si SB iguala, la ronda termina.
+            // Si SB pasa, BB actúa. Si BB pasa, la ronda termina.
             if (this.phase === GamePhase.PRE_FLOP) {
                 const sbPlayer = this.players[this.dealerIndex]; // SB
                 const bbPlayer = this.players[(this.dealerIndex + 1) % this.players.length]; // BB
                 
-                // If the current player is the one who started the round (SB) and everyone has acted at least once
-                // and the bet has been matched
+                // Si el jugador actual es el que inició la ronda (SB) y todos han actuado al menos una vez
+                // y la apuesta ha sido igualada
                 if (allMatched && this.currentPlayerIndex === originalStartingPlayerIndex && playersWhoHaveActedThisRound.size === 2) {
                      roundFinished = true;
                 }
-                 // If BB checks, and it's the dealer's turn, round should end (after dealer's previous check/call)
+                 // Si BB pasa, y es el turno del crupier, la ronda debería terminar (después del check/call anterior del crupier)
                  if (this.lastBet === this.bigBlind && sbPlayer.currentBet === this.bigBlind && bbPlayer.currentBet === this.bigBlind) {
-                    // This means SB called the BB, or BB checked if there was no raise.
-                    // Action should have returned to the player after BB (who is SB) if there was a raise.
-                    // If no raise, and action returned to player who made the BB, and they check, round ends.
-                    if (this.players[this.currentPlayerIndex].id === sbPlayer.id && bbPlayer.currentBet === this.bigBlind && action.type === 'check') { // If BB checked
+                    // Esto significa que SB igualó a BB, o BB pasó si no hubo subida.
+                    // La acción debería haber vuelto al jugador después de BB (que es SB) si hubo una subida.
+                    // Si no hay subida, y la acción volvió al jugador que hizo la BB, y ellos pasan, la ronda termina.
+                    if (this.players[this.currentPlayerIndex].id === sbPlayer.id && bbPlayer.currentBet === this.bigBlind && action.type === 'check') { // Si BB pasó
                          roundFinished = true;
                     }
                  }
 
             } else { // Post-flop
-                if (allMatched && playersWhoHaveActedThisRound.size >= allActivePlayers.length) { // Everyone matched and has acted since last aggressive action
+                if (allMatched && playersWhoHaveActedThisRound.size >= allActivePlayers.length) { // Todos igualaron y han actuado desde la última acción agresiva
                     roundFinished = true;
                 }
-                 // If no bet was made (all checks) and both players have acted
+                 // Si no se hizo ninguna apuesta (todos pasaron) y ambos jugadores han actuado
                 if (this.lastBet === 0 && playersWhoHaveActedThisRound.size === 2) {
                     roundFinished = true;
                 }
@@ -258,13 +258,13 @@ export class PokerGame {
                 this.ui.log(`${player.name} folds.`);
                 break;
             case 'check':
-                // Only possible if lastBet is 0 for this player
+                // Solo posible si lastBet es 0 para este jugador
                 if (this.lastBet - player.currentBet === 0) {
                     this.ui.log(`${player.name} checks.`);
                 } else {
-                    // Invalid action, should not happen if UI/AI prevents it
+                    // Acción inválida, no debería ocurrir si la UI/IA lo previene
                     this.ui.log(`${player.name} attempted to check but must call or fold.`);
-                    // Force fold or some penalty for invalid action for AI? For now, we assume valid actions.
+                    // Forzar retirada o alguna penalización por acción inválida para la IA? Por ahora, asumimos acciones válidas.
                 }
                 break;
             case 'call':
@@ -273,26 +273,26 @@ export class PokerGame {
                 this.makeBet(player, player.currentBet + chipsToCommitForCall);
                 this.ui.log(`${player.name} calls ${chipsToCommitForCall}.`);
                 break;
-            case 'bet': // Only allowed if currentBet is 0 for this round for all players
-                const betAmount = Math.max(this.bigBlind, action.amount || 0); // Minimum bet is big blind
+            case 'bet': // Solo permitido si currentBet es 0 para esta ronda para todos los jugadores
+                const betAmount = Math.max(this.bigBlind, action.amount || 0); // La apuesta mínima es la ciega grande
                 const chipsToCommitForBet = Math.min(betAmount, player.stack);
                 this.makeBet(player, player.currentBet + chipsToCommitForBet);
-                // this.lastBet and minRaise will be updated in bettingRound based on player.currentBet
+                // lastBet y minRaise se actualizarán en bettingRound en función de player.currentBet
                 this.ui.log(`${player.name} bets ${chipsToCommitForBet}.`);
                 break;
             case 'raise':
-                const minRaiseAmount = this.lastBet > 0 ? (this.lastBet - player.currentBet) + this.minRaise : this.bigBlind; // Min raise is previous raise amount
+                const minRaiseAmount = this.lastBet > 0 ? (this.lastBet - player.currentBet) + this.minRaise : this.bigBlind; // La subida mínima es la cantidad de la subida anterior
                 const totalAmountToRaiseTo = Math.max(action.amount || 0, minRaiseAmount);
 
                 const chipsToCommitForRaise = Math.min(totalAmountToRaiseTo, player.stack + player.currentBet) - player.currentBet;
                 this.makeBet(player, player.currentBet + chipsToCommitForRaise);
-                this.minRaise = (player.currentBet - (this.lastBet > 0 ? this.lastBet : 0)); // The raise amount
-                // this.lastBet will be updated in bettingRound based on player.currentBet
+                this.minRaise = (player.currentBet - (this.lastBet > 0 ? this.lastBet : 0)); // La cantidad de la subida
+                // lastBet se actualizará en bettingRound en función de player.currentBet
                 this.ui.log(`${player.name} raises to ${player.currentBet}.`);
                 break;
             case 'allin':
-                // This action type means the player explicitly chose to go all-in, not just happened to go all-in by calling/raising
-                this.makeBet(player, player.stack + player.currentBet); // Commit all remaining stack
+                // Este tipo de acción significa que el jugador eligió explícitamente ir all-in, no que simplemente sucedió al igualar/subir
+                this.makeBet(player, player.stack + player.currentBet); // Comprometer todo el stack restante
                 this.ui.log(`${player.name} goes ALL-IN!`);
                 break;
         }
@@ -305,13 +305,13 @@ export class PokerGame {
 
     endBettingRound() {
         console.log('[GAME] --- Ending Betting Round ---');
-        // Reset lastBet and currentBet for the next round
-        this.players.forEach(p => { p.currentBet = 0; }); // Reset currentBet at the end of each round
+        // Reiniciar lastBet y currentBet para la siguiente ronda
+        this.players.forEach(p => { p.currentBet = 0; }); // Reiniciar currentBet al final de cada ronda
         this.lastBet = 0;
         this.minRaise = this.bigBlind;
-        this.currentPlayerIndex = (this.dealerIndex + 1) % this.players.length; // Start next round after dealer
+        this.currentPlayerIndex = (this.dealerIndex + 1) % this.players.length; // Iniciar la siguiente ronda después del crupier
 
-        // If only one player remains in hand, no further community cards or betting rounds are needed.
+        // Si solo queda un jugador en la mano, no se necesitan más cartas comunitarias ni rondas de apuestas.
         if (this.players.filter(p => p.inHand).length <= 1) {
             this.resolveShowdown();
             return;
@@ -320,8 +320,8 @@ export class PokerGame {
         switch (this.phase) {
             case GamePhase.PRE_FLOP:
                 this.phase = GamePhase.FLOP;
-                this.deck.robar(); // Burn a card
-                this.community.push(this.deck.robar()!, this.deck.robar()!, this.deck.robar()!); // Deal 3 community cards
+                this.deck.robar(); // Quema una carta
+                this.community.push(this.deck.robar()!, this.deck.robar()!, this.deck.robar()!); // Reparte 3 cartas comunitarias
                 this.ui.log('Flop: ' + this.community.map(c => `${c.rango}${c.palo[0]}`).join(' '));
                 console.log('[GAME] Phase -> FLOP. Dealing 3 community cards.');
                 this.ui.showTable(this.community, this.players, this.totalPotAmount());
@@ -329,8 +329,8 @@ export class PokerGame {
                 break;
             case GamePhase.FLOP:
                 this.phase = GamePhase.TURN;
-                this.deck.robar(); // Burn a card
-                this.community.push(this.deck.robar()!); // Deal 1 community card
+                this.deck.robar(); // Quema una carta
+                this.community.push(this.deck.robar()!); // Reparte 1 carta comunitaria
                 this.ui.log('Turn: ' + this.community.map(c => `${c.rango}${c.palo[0]}`).join(' '));
                  console.log('[GAME] Phase -> TURN. Dealing 1 community card.');
                 this.ui.showTable(this.community, this.players, this.totalPotAmount());
@@ -338,8 +338,8 @@ export class PokerGame {
                 break;
             case GamePhase.TURN:
                 this.phase = GamePhase.RIVER;
-                this.deck.robar(); // Burn a card
-                this.community.push(this.deck.robar()!); // Deal 1 community card
+                this.deck.robar(); // Quema una carta
+                this.community.push(this.deck.robar()!); // Reparte 1 carta comunitaria
                 this.ui.log('River: ' + this.community.map(c => `${c.rango}${c.palo[0]}`).join(' '));
                 console.log('[GAME] Phase -> RIVER. Dealing 1 community card.');
                 this.ui.showTable(this.community, this.players, this.totalPotAmount());
@@ -356,22 +356,22 @@ export class PokerGame {
     resolveShowdown() {
         console.log('[GAME] --- Resolving Showdown ---');
         this.ui.displayShowdownMessage();
-        this.ui.revealAllHoleCards(this.players); // Reveal all hole cards at showdown
+        this.ui.revealAllHoleCards(this.players); // Revelar todas las cartas de mano en el showdown
         
         const playersStillInHand = this.players.filter(p => p.inHand);
         const totalWinnings = this.totalPotAmount();
 
         if (playersStillInHand.length === 0) {
-            this.ui.log('No players left in hand. Pot is returned.'); // Should ideally not happen
+            this.ui.log('No players left in hand. Pot is returned.'); // Idealmente no debería suceder
             console.warn('[GAME] No players left in hand at showdown.');
         } else if (playersStillInHand.length === 1) {
-            // If only one player remains, they win the entire pot
+            // Si solo queda un jugador, gana todo el bote
             const winner = playersStillInHand[0];
             winner.stack += totalWinnings;
             this.ui.log(`${winner.name} wins the pot of ${totalWinnings}.`);
             console.log(`[GAME] Winner by default: ${winner.name}`);
         } else {
-            // Both players are still in hand, evaluate their hands
+            // Ambos jugadores todavía están en la mano, evaluar sus manos
             const humanPlayer = this.players.find(p => p.isHuman)!;
             const aiPlayer = this.players.find(p => !p.isHuman)!;
 
@@ -385,15 +385,15 @@ export class PokerGame {
 
             const comparison = compareEval(humanEval, aiEval);
 
-            if (comparison > 0) { // Human wins
+            if (comparison > 0) { // Gana el humano
                 humanPlayer.stack += totalWinnings;
                 this.ui.log(`${humanPlayer.name} wins the pot of ${totalWinnings} with ${humanEval.description}!`);
                 console.log(`[GAME] Winner: ${humanPlayer.name} with ${humanEval.description}.`);
-            } else if (comparison < 0) { // AI wins
+            } else if (comparison < 0) { // Gana la IA
                 aiPlayer.stack += totalWinnings;
                 this.ui.log(`${aiPlayer.name} wins the pot of ${totalWinnings} with ${aiEval.description}!`);
                 console.log(`[GAME] Winner: ${aiPlayer.name} with ${aiEval.description}.`);
-            } else { // Split pot
+            } else { // Bote dividido
                 humanPlayer.stack += totalWinnings / 2;
                 aiPlayer.stack += totalWinnings / 2;
                 this.ui.log(`It's a tie! Pot of ${totalWinnings} is split.`);
@@ -401,7 +401,7 @@ export class PokerGame {
             }
         }
         
-        this.pots = []; // Clear all pots
+        this.pots = []; // Limpiar todos los botes
         this.dealerIndex = (this.dealerIndex + 1) % this.players.length;
 
         setTimeout(() => this.startHand(), 5000);
