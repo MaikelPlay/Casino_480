@@ -258,8 +258,10 @@ body {
 .community-cards .card {
     width: clamp(70px, 10vw, 90px);
     height: clamp(98px, 14vw, 126px);
-    animation: cardDeal 0.5s ease-out;
     flex-shrink: 0;
+    /* Animación solo en la primera aparición */
+    animation: cardDeal 0.5s ease-out;
+    animation-fill-mode: forwards;
 }
 
 @keyframes cardDeal {
@@ -271,6 +273,13 @@ body {
         opacity: 1;
         transform: translateY(0) rotateY(0) scale(1);
     }
+}
+
+/* Evitar que las cartas parpadeen al actualizar */
+.community-cards .card.dealt {
+    animation: none;
+    opacity: 1;
+    transform: translateY(0) rotateY(0) scale(1);
 }
 
 .pot {
@@ -298,15 +307,24 @@ body {
 }
 
 .phase-indicator {
-    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    display: none; /* Oculto - se mostrará al lado del jugador activo */
+}
+
+.player-area-poker .phase-badge {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
     font-weight: 700;
-    color: #ffd700;
-    background: rgba(0,0,0,0.85);
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 2px solid rgba(255,215,0,0.6);
-    text-shadow: 0 0 10px rgba(255,215,0,0.6);
-    letter-spacing: 1px;
+    color: #00ff00;
+    background: rgba(0,0,0,0.9);
+    padding: 4px 10px;
+    border-radius: 15px;
+    border: 2px solid rgba(0,255,0,0.6);
+    text-shadow: 0 0 10px rgba(0,255,0,0.6);
+    letter-spacing: 0.5px;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
 }
 
 .dealer-button {

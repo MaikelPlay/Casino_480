@@ -77,10 +77,14 @@ export class PokerUI {
 
     showTable(community: Carta[], players: PokerPlayer[], totalPot: number, phase?: string) {
         if (this.communityCardsContainer) {
-            const communityHTML = community.map(c => 
-                `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`
-            ).join('');
-            this.communityCardsContainer.innerHTML = communityHTML;
+            // Solo actualizar si el número de cartas cambió para evitar parpadeo
+            const currentCards = this.communityCardsContainer.querySelectorAll('.card').length;
+            if (currentCards !== community.length) {
+                const communityHTML = community.map((c, idx) => 
+                    `<div class="card dealt"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`
+                ).join('');
+                this.communityCardsContainer.innerHTML = communityHTML;
+            }
         }
         
         if (this.potDiv) {
@@ -150,6 +154,22 @@ export class PokerUI {
                 }
             }
         });
+    }
+
+    showPhaseOnActivePlayer(playerIndex: number, players: PokerPlayer[], phase: string): void {
+        // Limpiar badges de fase existentes
+        document.querySelectorAll('.phase-badge').forEach(el => el.remove());
+        
+        if (playerIndex >= 0 && playerIndex < players.length) {
+            const playerArea = document.getElementById(`player-area-${players[playerIndex].id}`);
+            if (playerArea) {
+                const phaseBadge = document.createElement('div');
+                phaseBadge.className = 'phase-badge';
+                const phaseText = this.translations[phase.toLowerCase().replace('_', '')] || phase;
+                phaseBadge.textContent = phaseText;
+                playerArea.appendChild(phaseBadge);
+            }
+        }
     }
 
     showBlindIndicators(smallBlindIndex: number, bigBlindIndex: number, players: PokerPlayer[]): void {

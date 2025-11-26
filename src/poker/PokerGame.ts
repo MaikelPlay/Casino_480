@@ -213,6 +213,11 @@ export class PokerGame {
                 (this.ui as any).markActivePlayer(this.currentPlayerIndex, this.players);
             }
             
+            // Mostrar fase al lado del jugador activo
+            if (typeof (this.ui as any).showPhaseOnActivePlayer === 'function') {
+                (this.ui as any).showPhaseOnActivePlayer(this.currentPlayerIndex, this.players, this.phase.toString());
+            }
+            
             this.ui.log(`Turno de ${player.name}. Para igualar: ${currentBetToCall}€. Stack: ${player.stack}€`);
             console.log(`[GAME] ${player.name}'s turn. To call: ${currentBetToCall}€. Stack: ${player.stack}€`);
 
