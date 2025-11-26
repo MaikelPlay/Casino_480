@@ -1,24 +1,32 @@
-import { Carta } from '../../src/common/Card.js';
-import { PokerPlayer } from './PokerPlayer.js'; // Corrected import path for PokerPlayer
+import { Carta } from '../common/Card.js';
+import { PokerPlayer } from './PokerPlayer.js';
 
 export class PokerUI {
     private playersContainer: HTMLElement | null = document.getElementById('players-container');
     private communityCardsContainer: HTMLElement | null = document.getElementById('community-cards');
     private potDiv: HTMLElement | null = document.getElementById('pot');
     private mensajesDiv: HTMLElement | null = document.getElementById('messages');
+    private phaseIndicator: HTMLElement | null = document.getElementById('phase-indicator');
+    private dealerButton: HTMLElement | null = document.getElementById('dealer-button');
     private currentLang = 'es';
     private translations: { [k: string]: string } = {
         potLabel: 'Bote',
-        playerBalanceLabel: '$',
+        playerBalanceLabel: '',
         showdownMessage: '¡Hora de la verdad! Determinando ganador...',
         foldButton: 'Retirarse',
         checkButton: 'Pasar',
         callButton: 'Igualar',
         raiseButton: 'Subir',
-        actionPrompt: 'Acción?',
+        actionPrompt: '¿Acción?',
+        smallBlind: 'SB',
+        bigBlind: 'BB',
+        preFlop: 'Pre-Flop',
+        flop: 'Flop',
+        turn: 'Turn',
+        river: 'River',
+        showdown: 'Showdown',
     };
 
-    // Referencias a los botones de acción
     private foldButton: HTMLButtonElement | null = document.getElementById('fold-button') as HTMLButtonElement;
     private checkButton: HTMLButtonElement | null = document.getElementById('check-button') as HTMLButtonElement;
     private callButton: HTMLButtonElement | null = document.getElementById('call-button') as HTMLButtonElement;
@@ -26,18 +34,15 @@ export class PokerUI {
     private raiseAmountInput: HTMLInputElement | null = document.getElementById('raise-amount') as HTMLInputElement;
     private playerActionResolver: ((value: { type: string; amount?: number }) => void) | null = null;
 
-
     constructor() {
-        this.disableActionButtons(); // Empezar con los botones deshabilitados
+        this.disableActionButtons();
     }
 
     log(msg: string) {
         if (this.mensajesDiv) {
-            // Añadir mensaje para evitar sobrescribir y mostrar un historial
             const p = document.createElement('p');
             p.textContent = msg;
             this.mensajesDiv.appendChild(p);
-            // Desplazarse hasta el final
             this.mensajesDiv.scrollTop = this.mensajesDiv.scrollHeight;
         }
     }
@@ -48,64 +53,140 @@ export class PokerUI {
         }
     }
 
-    showTable(community: Carta[], players: PokerPlayer[], totalPot: number) {
+    updatePhase(phase: string): void {
+        if (this.phaseIndicator) {
+            const phaseText = this.translations[phase.toLowerCase().replace('_', '')] || phase;
+            this.phaseIndicator.textContent = phaseText;
+        }
+    }
+
+    updateDealerButton(dealerIndex: number, players: PokerPlayer[]): void {
+        if (!this.dealerButton || players.length === 0) return;
+        
+        const dealerArea = document.getElementById(`player-area-${players[dealerIndex].id}`);
+        if (dealerArea) {
+            const rect = dealerArea.getBoundingClientRect();
+            const containerRect = this.dealerButton.parentElement?.getBoundingClientRect();
+            
+            if (containerRect) {
+                this.dealerButton.style.left = `${rect.left - containerRect.left + rect.width / 2 - 20}px`;
+                this.dealerButton.style.top = `${rect.top - containerRect.top - 25}px`;
+            }
+        }
+    }
+
+    showTable(community: Carta[], players: PokerPlayer[], totalPot: number, phase?: string) {
         if (this.communityCardsContainer) {
-            const communityHTML = community.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
+            const communityHTML = community.map(c => 
+                `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`
+            ).join('');
             this.communityCardsContainer.innerHTML = communityHTML;
         }
-        if (this.potDiv) this.potDiv.textContent = `${this.translations.potLabel}: $${totalPot}`;
         
-        // Actualizar áreas de jugador (cartas y saldo)
+        if (this.potDiv) {
+            this.potDiv.textContent = `${this.translations.potLabel}: ${totalPot}€`;
+        }
+
+        if (phase) {
+            this.updatePhase(phase);
+        }
+        
         players.forEach((player) => {
             const playerArea = document.getElementById(`player-area-${player.id}`);
             if (playerArea) {
                 const balanceDiv = playerArea.querySelector('.player-balance');
-                if (balanceDiv) balanceDiv.textContent = `${this.translations.playerBalanceLabel}${player.stack}`;
+                if (balanceDiv) {
+                    balanceDiv.textContent = `${player.stack}€`;
+                }
                 
                 const betDiv = playerArea.querySelector('.player-bet');
-                if (betDiv) betDiv.textContent = `Bet: $${player.currentBet}`;
+                if (betDiv) {
+                    betDiv.textContent = player.currentBet > 0 ? `Apuesta: ${player.currentBet}€` : '';
+                }
 
-                const cardsDiv = document.getElementById(`player-cards-${player.id}`);
+                const cardsDiv = playerArea.querySelector('.player-cards');
                 if (cardsDiv) {
-                    // Mostrar cartas de mano
                     let handHTML = '';
                     if (player.isHuman) {
-                        handHTML = player.holeCards.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
+                        handHTML = player.holeCards.map(c => 
+                            `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`
+                        ).join('');
                     } else {
-                        // Para jugadores IA, mostrar cartas boca abajo a menos que sea el showdown
-                        // Por ahora, se asume boca abajo a menos que se revelen explícitamente
-                        handHTML = player.holeCards.map(() => `<div class="card back"><img src="assets/Baraja/atras.png" alt="Card back"></div>`).join('');
+                        handHTML = player.holeCards.map(() => 
+                            `<div class="card"><img src="assets/Baraja/atras.png" alt="Card back"></div>`
+                        ).join('');
                     }
                     cardsDiv.innerHTML = handHTML;
                 }
 
-                // Actualizar estado del jugador
                 const statusDiv = playerArea.querySelector('.player-status');
                 if (statusDiv) {
+                    statusDiv.textContent = '';
+                    statusDiv.className = 'player-status';
+                    
                     if (!player.inHand) {
-                        statusDiv.textContent = '(Fold)';
+                        statusDiv.textContent = '(Retirado)';
                         statusDiv.classList.add('folded');
                     } else if (player.isAllIn) {
                         statusDiv.textContent = '(All-In)';
                         statusDiv.classList.add('all-in');
-                    } else {
-                        statusDiv.textContent = '';
-                        statusDiv.classList.remove('folded', 'all-in');
                     }
+                }
+
+                // Remover clase de turno activo
+                playerArea.classList.remove('active-turn');
+            }
+        });
+    }
+
+    markActivePlayer(playerIndex: number, players: PokerPlayer[]): void {
+        players.forEach((player, idx) => {
+            const playerArea = document.getElementById(`player-area-${player.id}`);
+            if (playerArea) {
+                if (idx === playerIndex && player.inHand && !player.isAllIn) {
+                    playerArea.classList.add('active-turn');
+                } else {
+                    playerArea.classList.remove('active-turn');
                 }
             }
         });
     }
 
-    async promptPlayerAction(player: PokerPlayer, minCall: number, canRaise: boolean, lastBet: number, minRaise: number): Promise<{ type: string; amount?: number }> {
-        console.log(`[UI] Prompting action for ${player.name}`);
+    showBlindIndicators(smallBlindIndex: number, bigBlindIndex: number, players: PokerPlayer[]): void {
+        // Limpiar indicadores existentes
+        document.querySelectorAll('.blind-indicator').forEach(el => el.remove());
+
+        // Añadir indicador de ciega pequeña
+        const sbArea = document.getElementById(`player-area-${players[smallBlindIndex].id}`);
+        if (sbArea) {
+            const sbIndicator = document.createElement('div');
+            sbIndicator.className = 'blind-indicator';
+            sbIndicator.textContent = this.translations.smallBlind;
+            sbArea.appendChild(sbIndicator);
+        }
+
+        // Añadir indicador de ciega grande
+        const bbArea = document.getElementById(`player-area-${players[bigBlindIndex].id}`);
+        if (bbArea) {
+            const bbIndicator = document.createElement('div');
+            bbIndicator.className = 'blind-indicator';
+            bbIndicator.textContent = this.translations.bigBlind;
+            bbArea.appendChild(bbIndicator);
+        }
+    }
+
+    async promptPlayerAction(
+        player: PokerPlayer, 
+        minCall: number, 
+        canRaise: boolean, 
+        lastBet: number, 
+        minRaise: number
+    ): Promise<{ type: string; amount?: number }> {
         this.log(`${player.name}, ${this.translations.actionPrompt}`);
         this.enableActionButtons(minCall, player.stack, canRaise, lastBet, minRaise);
 
         return new Promise(resolve => {
             this.playerActionResolver = resolve;
-
-            // Eliminar escuchas existentes para prevenir múltiples enlaces
             this.removeActionListeners();
 
             this.foldButton?.addEventListener('click', this.handleFold);
@@ -116,28 +197,23 @@ export class PokerUI {
     }
 
     private handleFold = () => {
-        console.log('[UI] Fold button clicked');
         this.resolvePlayerAction({ type: 'fold' });
     }
 
     private handleCheck = () => {
-        console.log('[UI] Check button clicked');
         this.resolvePlayerAction({ type: 'check' });
     }
 
     private handleCall = () => {
-        console.log('[UI] Call button clicked');
-        // La cantidad a igualar se deriva de minCall, así que no necesitamos pasarla aquí
         this.resolvePlayerAction({ type: 'call' });
     }
 
     private handleRaise = () => {
-        console.log('[UI] Raise button clicked');
         const amount = this.raiseAmountInput ? parseInt(this.raiseAmountInput.value, 10) : undefined;
-        if (amount && amount > 0) { // Validación básica
+        if (amount && amount > 0) {
             this.resolvePlayerAction({ type: 'raise', amount });
         } else {
-            this.log('Invalid raise amount. Please enter a positive number.');
+            this.log('Cantidad de subida inválida.');
         }
     }
 
@@ -150,41 +226,39 @@ export class PokerUI {
         }
     }
 
-    private enableActionButtons(minCall: number, playerStack: number, canRaise: boolean, lastBet: number, minRaise: number): void {
-        // Permitir siempre retirarse
+    private enableActionButtons(
+        minCall: number, 
+        playerStack: number, 
+        canRaise: boolean, 
+        lastBet: number, 
+        minRaise: number
+    ): void {
         if (this.foldButton) this.foldButton.disabled = false;
         
-        // Lógica de Pasar/Igualar
         if (minCall === 0) {
             if (this.checkButton) this.checkButton.disabled = false;
             if (this.callButton) this.callButton.disabled = true;
         } else {
             if (this.checkButton) this.checkButton.disabled = true;
-            // Solo se puede igualar si el jugador tiene suficientes fichas para igualar minCall o ir all-in intentando igualar
             if (this.callButton) this.callButton.disabled = (playerStack === 0);
         }
 
-        // Lógica de Subir
-        // Solo se puede subir si está explícitamente permitido y el jugador tiene suficientes fichas
-        if (this.raiseButton) this.raiseButton.disabled = !canRaise || playerStack <= minCall;
+        if (this.raiseButton) {
+            this.raiseButton.disabled = !canRaise || playerStack <= minCall;
+        }
+        
         if (this.raiseAmountInput) {
             this.raiseAmountInput.disabled = !canRaise || playerStack <= minCall;
-            // La apuesta total mínima para una subida es (lastBet + minRaise)
             const theoreticalMinTotalRaise = lastBet + minRaise;
-            this.raiseAmountInput.min = (theoreticalMinTotalRaise).toString();
-            this.raiseAmountInput.value = (theoreticalMinTotalRaise).toString();
+            this.raiseAmountInput.min = theoreticalMinTotalRaise.toString();
+            this.raiseAmountInput.value = theoreticalMinTotalRaise.toString();
             this.raiseAmountInput.max = playerStack.toString();
         }
 
-        // Manejar all-in explícitamente si playerStack <= minCall y no se han retirado.
-        // Los botones reflejarán si pueden igualar/subir o solo pueden ir all-in implícitamente
-        // igualando/subiendo con sus fichas restantes.
-        if (playerStack <= minCall) {
-            if (this.callButton) this.callButton.textContent = `All-In ($${playerStack})`;
-            if (this.raiseButton) this.raiseButton.disabled = true;
-            if (this.raiseAmountInput) this.raiseAmountInput.disabled = true;
-        } else {
-            if (this.callButton) this.callButton.textContent = `${this.translations.callButton} ($${minCall})`;
+        if (playerStack <= minCall && this.callButton) {
+            this.callButton.textContent = `All-In (${playerStack}€)`;
+        } else if (this.callButton) {
+            this.callButton.textContent = `${this.translations.callButton} (${minCall}€)`;
         }
     }
 
@@ -194,7 +268,7 @@ export class PokerUI {
         if (this.callButton) this.callButton.disabled = true;
         if (this.raiseButton) this.raiseButton.disabled = true;
         if (this.raiseAmountInput) this.raiseAmountInput.disabled = true;
-        if (this.callButton) this.callButton.textContent = this.translations.callButton; // Reiniciar texto
+        if (this.callButton) this.callButton.textContent = this.translations.callButton;
     }
 
     private removeActionListeners(): void {
@@ -209,26 +283,41 @@ export class PokerUI {
         const map: { [lang: string]: any } = {
             es: { 
                 potLabel: 'Bote', 
-                playerBalanceLabel: '$', 
+                playerBalanceLabel: '',
                 showdownMessage: '¡Hora de la verdad! Determinando ganador...',
                 foldButton: 'Retirarse',
                 checkButton: 'Pasar',
                 callButton: 'Igualar',
                 raiseButton: 'Subir',
-                actionPrompt: 'Acción?',
+                actionPrompt: '¿Acción?',
+                smallBlind: 'SB',
+                bigBlind: 'BB',
+                preFlop: 'Pre-Flop',
+                flop: 'Flop',
+                turn: 'Turn',
+                river: 'River',
+                showdown: 'Showdown',
             },
             en: { 
                 potLabel: 'Pot', 
-                playerBalanceLabel: '$', 
+                playerBalanceLabel: '',
                 showdownMessage: 'Showdown! Determining winner...',
                 foldButton: 'Fold',
                 checkButton: 'Check',
                 callButton: 'Call',
                 raiseButton: 'Raise',
                 actionPrompt: 'Action?',
+                smallBlind: 'SB',
+                bigBlind: 'BB',
+                preFlop: 'Pre-Flop',
+                flop: 'Flop',
+                turn: 'Turn',
+                river: 'River',
+                showdown: 'Showdown',
             },
         };
         this.translations = map[this.currentLang] || map['es'];
+        
         if (this.potDiv) this.potDiv.textContent = `${this.translations.potLabel}:`;
         if (this.foldButton) this.foldButton.textContent = this.translations.foldButton;
         if (this.checkButton) this.checkButton.textContent = this.translations.checkButton;
@@ -240,52 +329,75 @@ export class PokerUI {
         if (!this.playersContainer) return;
         this.playersContainer.innerHTML = '';
         
-        // Posiciones fijas para Humano (centro inferior) e IA (centro superior)
-        const humanPosition = { top: '85%', left: '50%' };
-        const aiPosition = { top: '15%', left: '50%' }; // Ajustado para centro superior
+        // Posiciones para 1-4 jugadores en círculo alrededor de la mesa
+        const positions = this.calculatePlayerPositions(players.length);
 
-        players.forEach((player) => {
+        players.forEach((player, index) => {
             const playerArea = document.createElement('div');
             playerArea.classList.add('player-area-poker');
+            if (player.isHuman) {
+                playerArea.classList.add('human-player');
+            }
             playerArea.id = `player-area-${player.id}`;
             playerArea.style.position = 'absolute';
             
-            // Asignar posiciones fijas
-            const pos = player.isHuman ? humanPosition : aiPosition;
+            const pos = positions[index];
             playerArea.style.left = pos.left;
             playerArea.style.top = pos.top;
             playerArea.style.transform = 'translate(-50%, -50%)';
 
             playerArea.innerHTML = `
-                                <div class="player-name">${player.name}</div>
-                                <div class="player-status"></div>
-                                <div class="player-balance">${this.translations.playerBalanceLabel}${player.stack}</div>
-                                <div class="player-bet">Bet: $${player.currentBet}</div>
-                                <div id="player-cards-${player.id}" class="player-cards"></div>
-                        `;
+                <div class="player-name">${player.name}</div>
+                <div class="player-status"></div>
+                <div class="player-balance">${player.stack}€</div>
+                <div class="player-bet"></div>
+                <div class="player-cards"></div>
+            `;
             this.playersContainer.appendChild(playerArea);
         });
     }
 
-    // Se eliminó repartirCarta ya que showTable ahora maneja el renderizado de cartas de manera más completa.
-    // Podemos agregar lógica de animación de cartas específica más tarde si es necesario.
-
-    actualizarBote(pot: number): void {
-        if (this.potDiv) this.potDiv.textContent = `${this.translations.potLabel}: $${pot}`;
+    private calculatePlayerPositions(numPlayers: number): Array<{ left: string; top: string }> {
+        // Posiciones optimizadas para 1-4 jugadores
+        switch (numPlayers) {
+            case 1:
+                return [{ left: '50%', top: '85%' }]; // Solo humano abajo
+            case 2:
+                return [
+                    { left: '50%', top: '85%' }, // Humano abajo
+                    { left: '50%', top: '15%' }  // IA arriba
+                ];
+            case 3:
+                return [
+                    { left: '50%', top: '85%' },  // Humano abajo
+                    { left: '15%', top: '35%' },  // IA izquierda
+                    { left: '85%', top: '35%' }   // IA derecha
+                ];
+            case 4:
+                return [
+                    { left: '50%', top: '85%' },  // Humano abajo
+                    { left: '15%', top: '50%' },  // IA izquierda
+                    { left: '50%', top: '15%' },  // IA arriba
+                    { left: '85%', top: '50%' }   // IA derecha
+                ];
+            default:
+                return [{ left: '50%', top: '85%' }];
+        }
     }
 
     mostrarMensaje(message: string): void {
-        this.log(message); // Usar el método log mejorado
+        this.log(message);
     }
 
     displayShowdownMessage(): void {
         this.log(this.translations.showdownMessage);
     }
 
-    limpiarTablero(): void { // Se eliminó el parámetro numPlayers ya que no es estrictamente necesario para limpiar todas las áreas de jugador
-        if (this.communityCardsContainer) this.communityCardsContainer.innerHTML = '';
+    limpiarTablero(): void {
+        if (this.communityCardsContainer) {
+            this.communityCardsContainer.innerHTML = '';
+        }
         
-        // Limpiar cartas y estado del jugador para todas las áreas de jugador
         const allPlayerCardsDivs = document.querySelectorAll<HTMLElement>('.player-cards');
         allPlayerCardsDivs.forEach(cardsDiv => {
             cardsDiv.innerHTML = '';
@@ -297,15 +409,21 @@ export class PokerUI {
             statusDiv.classList.remove('folded', 'all-in');
         });
 
-        this.clearMessages(); // Limpiar todos los mensajes
+        document.querySelectorAll('.blind-indicator').forEach(el => el.remove());
+        document.querySelectorAll('.player-area-poker').forEach(el => {
+            el.classList.remove('active-turn');
+        });
     }
 
-    // Método para revelar todas las cartas de mano en el showdown
     revealAllHoleCards(players: PokerPlayer[]): void {
         players.forEach(player => {
-            const cardsDiv = document.getElementById(`player-cards-${player.id}`);
+            if (!player.inHand) return;
+            
+            const cardsDiv = document.querySelector(`#player-area-${player.id} .player-cards`);
             if (cardsDiv) {
-                const handHTML = player.holeCards.map(c => `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`).join('');
+                const handHTML = player.holeCards.map(c => 
+                    `<div class="card"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`
+                ).join('');
                 cardsDiv.innerHTML = handHTML;
             }
         });
