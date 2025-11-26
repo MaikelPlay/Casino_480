@@ -447,23 +447,23 @@ body {
 /* Messages */
 .messages {
     position: absolute;
-    bottom: clamp(100px, 15vh, 130px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: clamp(300px, 80%, 800px);
-    max-height: clamp(80px, 12vh, 120px);
+    top: 20px;
+    right: 20px;
+    width: clamp(250px, 30%, 350px);
+    max-height: clamp(150px, 25vh, 250px);
     background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0.85) 100%);
     border-radius: 12px;
     border: 2px solid rgba(255,215,0,0.3);
     overflow-y: auto;
     padding: clamp(8px, 1.5vh, 12px);
     color: #e0e0e0;
-    font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
     text-align: left;
     backdrop-filter: blur(8px);
     box-shadow: 
         0 8px 25px rgba(0,0,0,0.7),
         inset 0 1px 0 rgba(255,255,255,0.05);
+    z-index: 50;
 }
 
 .messages p {
@@ -553,9 +553,11 @@ body {
     }
 
     .messages {
-        bottom: 90px;
-        max-height: 80px;
-        font-size: 0.75rem;
+        top: 10px;
+        right: 10px;
+        width: 200px;
+        max-height: 120px;
+        font-size: 0.7rem;
     }
 
     .pot {
