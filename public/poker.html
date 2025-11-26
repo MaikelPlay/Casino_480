@@ -15,25 +15,46 @@
     <a href="index.html" class="back-button" title="Volver al inicio">← Inicio</a>
     <button id="rules-toggle" class="rules-toggle-button">Reglas</button>
     <div id="rules-panel" class="side-panel">
-        <h2>Reglas del Texas Hold'em</h2>
-        <p><strong>Objetivo:</strong> Ganar el bote formando la mejor mano de cinco cartas combinando tus dos cartas privadas y las cinco cartas comunitarias.</p>
-        <h4>Fases del Juego:</h4>
+        <h2>Texas Hold'em Poker</h2>
+        <button id="close-rules" class="close-button">✕</button>
+        
+        <h4>Objetivo</h4>
+        <p>Ganar el bote formando la mejor mano de 5 cartas usando tus 2 cartas privadas y las 5 cartas comunitarias.</p>
+        
+        <h4>Ranking de Manos (Mayor a Menor)</h4>
         <ol>
-            <li><strong>Pre-Flop:</strong> Recibes dos cartas. Hay una ronda de apuestas.</li>
-            <li><strong>Flop:</strong> Se muestran tres cartas comunitarias. Otra ronda de apuestas.</li>
-            <li><strong>Turn:</strong> Se muestra una cuarta carta comunitaria. Otra ronda de apuestas.</li>
-            <li><strong>River:</strong> Se muestra la quinta y última carta comunitaria. Última ronda de apuestas.</li>
-            <li><strong>Showdown:</strong> Si quedan jugadores, muestran sus cartas. El mejor gana.</li>
+            <li><strong>Escalera Real:</strong> A-K-Q-J-10 del mismo palo</li>
+            <li><strong>Escalera de Color:</strong> 5 cartas consecutivas del mismo palo</li>
+            <li><strong>Póker:</strong> 4 cartas del mismo valor</li>
+            <li><strong>Full House:</strong> Trío + Pareja</li>
+            <li><strong>Color:</strong> 5 cartas del mismo palo</li>
+            <li><strong>Escalera:</strong> 5 cartas consecutivas</li>
+            <li><strong>Trío:</strong> 3 cartas del mismo valor</li>
+            <li><strong>Doble Pareja:</strong> 2 parejas diferentes</li>
+            <li><strong>Pareja:</strong> 2 cartas del mismo valor</li>
+            <li><strong>Carta Alta:</strong> La carta más alta</li>
         </ol>
-        <h4>Acciones:</h4>
+        
+        <h4>Fases del Juego</h4>
+        <ol>
+            <li><strong>Pre-Flop:</strong> Recibes 2 cartas. Ronda de apuestas.</li>
+            <li><strong>Flop:</strong> Se revelan 3 cartas comunitarias. Ronda de apuestas.</li>
+            <li><strong>Turn:</strong> Se revela 1 carta más (4ª). Ronda de apuestas.</li>
+            <li><strong>River:</strong> Se revela la última carta (5ª). Ronda final de apuestas.</li>
+            <li><strong>Showdown:</strong> Se revelan las cartas y gana la mejor mano.</li>
+        </ol>
+        
+        <h4>Acciones</h4>
         <ul>
-            <li><strong>Pasar (Check):</strong> No apostar, pero seguir en la mano.</li>
-            <li><strong>Apostar (Bet):</strong> Ser el primero en poner dinero en el bote.</li>
-            <li><strong>Igualar (Call):</strong> Igualar la apuesta más reciente.</li>
-            <li><strong>Subir (Raise):</strong> Aumentar la apuesta actual.</li>
-            <li><strong>Retirarse (Fold):</strong> Descartar tus cartas y salir de la mano actual.</li>
+            <li><strong>Retirarse (Fold):</strong> Abandonar la mano</li>
+            <li><strong>Pasar (Check):</strong> No apostar (solo si nadie apostó)</li>
+            <li><strong>Igualar (Call):</strong> Igualar la apuesta actual</li>
+            <li><strong>Subir (Raise):</strong> Aumentar la apuesta</li>
         </ul>
-        <button id="close-rules" class="close-button">Cerrar</button>
+        
+        <h4>Ciegas</h4>
+        <p><strong>SB (Small Blind):</strong> Apuesta obligatoria pequeña<br>
+        <strong>BB (Big Blind):</strong> Apuesta obligatoria grande (doble de SB)</p>
     </div>
 
     <div class="poker-table-container">
