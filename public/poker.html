@@ -12,17 +12,62 @@
     <script type="module" src="../dist/poker.js" defer></script>
 </head>
 <body>
-    <div class="game-container poker-table">
-        <h1>Poker Texas Hold'em</h1>
+    <a href="index.html" class="back-button" title="Volver al inicio">← Inicio</a>
+    <button id="rules-toggle" class="rules-toggle-button">Reglas</button>
+    <div id="rules-panel" class="side-panel">
+        <h2>Texas Hold'em Poker</h2>
+        <button id="close-rules" class="close-button">✕</button>
         
-        <div id="messages" class="messages"></div>
+        <h4>Objetivo</h4>
+        <p>Ganar el bote formando la mejor mano de 5 cartas usando tus 2 cartas privadas y las 5 cartas comunitarias.</p>
+        
+        <h4>Ranking de Manos (Mayor a Menor)</h4>
+        <ol>
+            <li><strong>Escalera Real:</strong> A-K-Q-J-10 del mismo palo</li>
+            <li><strong>Escalera de Color:</strong> 5 cartas consecutivas del mismo palo</li>
+            <li><strong>Póker:</strong> 4 cartas del mismo valor</li>
+            <li><strong>Full House:</strong> Trío + Pareja</li>
+            <li><strong>Color:</strong> 5 cartas del mismo palo</li>
+            <li><strong>Escalera:</strong> 5 cartas consecutivas</li>
+            <li><strong>Trío:</strong> 3 cartas del mismo valor</li>
+            <li><strong>Doble Pareja:</strong> 2 parejas diferentes</li>
+            <li><strong>Pareja:</strong> 2 cartas del mismo valor</li>
+            <li><strong>Carta Alta:</strong> La carta más alta</li>
+        </ol>
+        
+        <h4>Fases del Juego</h4>
+        <ol>
+            <li><strong>Pre-Flop:</strong> Recibes 2 cartas. Ronda de apuestas.</li>
+            <li><strong>Flop:</strong> Se revelan 3 cartas comunitarias. Ronda de apuestas.</li>
+            <li><strong>Turn:</strong> Se revela 1 carta más (4ª). Ronda de apuestas.</li>
+            <li><strong>River:</strong> Se revela la última carta (5ª). Ronda final de apuestas.</li>
+            <li><strong>Showdown:</strong> Se revelan las cartas y gana la mejor mano.</li>
+        </ol>
+        
+        <h4>Acciones</h4>
+        <ul>
+            <li><strong>Retirarse (Fold):</strong> Abandonar la mano</li>
+            <li><strong>Pasar (Check):</strong> No apostar (solo si nadie apostó)</li>
+            <li><strong>Igualar (Call):</strong> Igualar la apuesta actual</li>
+            <li><strong>Subir (Raise):</strong> Aumentar la apuesta</li>
+        </ul>
+        
+        <h4>Ciegas</h4>
+        <p><strong>SB (Small Blind):</strong> Apuesta obligatoria pequeña<br>
+        <strong>BB (Big Blind):</strong> Apuesta obligatoria grande (doble de SB)</p>
+    </div>
 
-        <div class="table-center">
-            <div id="community-cards" class="community-cards"></div>
-            <div id="pot" class="pot">Bote: $0</div>
+    <div class="poker-table-container">
+        <div class="poker-table-oval">
+            <div id="players-container" class="players-container-poker">
+                <!-- Player areas will be dynamically generated here -->
+            </div>
+            <div class="table-center">
+                <div id="community-cards" class="community-cards"></div>
+                <div id="pot" class="pot">Bote: 0€</div>
+                <div id="phase-indicator" class="phase-indicator">Pre-Flop</div>
+            </div>
         </div>
-
-        <div id="players-container" class="players-container-poker"></div>
 
         <div class="actions poker-actions">
             <button id="fold-button">Retirarse</button>
@@ -33,6 +78,8 @@
                 <input type="number" id="raise-amount" value="20" min="20" step="10">
             </div>
         </div>
+        
+        <div id="messages" class="messages"></div>
     </div>
 </body>
 </html>

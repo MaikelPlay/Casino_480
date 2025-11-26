@@ -10,6 +10,31 @@ export class Carta {
     constructor(public palo: Palo, public rango: Rango) {}
 
     /**
+     * Returns the numerical value of the card's rank.
+     * @returns {number} The numerical rank.
+     */
+    public get numericalRank(): number {
+        const rankMap: { [key: string]: number } = {
+            'j': 11, 'q': 12, 'k': 13, 'as': 14
+        };
+        return rankMap[this.rango] || parseInt(this.rango);
+    }
+
+    /**
+     * Returns the English name of the card's suit.
+     * @returns {string} The English suit name.
+     */
+    public get suit(): string {
+        const suitMap: { [key: string]: string } = {
+            'corazones': 'hearts',
+            'rombo': 'diamonds',
+            'picas': 'spades',
+            'trebol': 'clubs'
+        };
+        return suitMap[this.palo];
+    }
+
+    /**
      * Returns the relative path to the card's image asset.
      * @returns {string} The image path.
      */

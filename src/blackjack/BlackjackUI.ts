@@ -44,13 +44,12 @@ export class BlackjackUI {
             playerArea.classList.add('player-area');
             playerArea.id = `player-area-${i}`;
             playerArea.innerHTML = `
-                <h2>${this.translations.playerLabel} ${i + 1}: <span id="player-score-${i}">0</span></h2>
+                <h2 id="player-name-${i}">${this.translations.playerLabel} ${i + 1}: <span id="player-score-${i}">0</span></h2>
                 <div id="player-cards-${i}" class="card-area"></div>
                 <div class="player-meta">
-                    <div class="player-name" id="player-name-${i}">${this.translations.playerLabel} ${i + 1}</div>
                     <div class="player-type" id="player-type-${i}">${this.translations.humanType}</div>
-                    <div class="balance">${this.translations.balanceLabel}: $<span id="player-balance-${i}">0</span></div>
-                    <div class="bet">${this.translations.betLabel}: $<span id="player-bet-${i}">0</span></div>
+                    <div class="balance">${this.translations.balanceLabel}: <span id="player-balance-${i}">0</span>€</div>
+                    <div class="bet">${this.translations.betLabel}: <span id="player-bet-${i}">0</span>€</div>
                 </div>
                 <div class="you-badge" id="you-badge-${i}">${this.translations.youText}</div>
             `;
@@ -83,14 +82,12 @@ export class BlackjackUI {
         // Update existing player-area labels if already created
         const playerAreas = this.playersContainer.querySelectorAll('.player-area');
         playerAreas.forEach((area, i) => {
-            const nameDiv = area.querySelector(`#player-name-${i}`) as HTMLElement;
-            if (nameDiv) nameDiv.textContent = `${this.translations.playerLabel} ${i + 1}`;
             const typeDiv = area.querySelector(`#player-type-${i}`) as HTMLElement;
             if (typeDiv) typeDiv.textContent = this.translations.humanType;
             const balanceDiv = area.querySelector('.balance') as HTMLElement;
-            if (balanceDiv) balanceDiv.innerHTML = `${this.translations.balanceLabel}: $<span id="player-balance-${i}">${(document.getElementById(`player-balance-${i}`)?.textContent) || '0'}</span>`;
+            if (balanceDiv) balanceDiv.innerHTML = `${this.translations.balanceLabel}: <span id="player-balance-${i}">${(document.getElementById(`player-balance-${i}`)?.textContent) || '0'}</span>€`;
             const betDiv = area.querySelector('.bet') as HTMLElement;
-            if (betDiv) betDiv.innerHTML = `${this.translations.betLabel}: $<span id="player-bet-${i}">${(document.getElementById(`player-bet-${i}`)?.textContent) || '0'}</span>`;
+            if (betDiv) betDiv.innerHTML = `${this.translations.betLabel}: <span id="player-bet-${i}">${(document.getElementById(`player-bet-${i}`)?.textContent) || '0'}</span>€`;
             const youBadge = document.getElementById(`you-badge-${i}`);
             if (youBadge) youBadge.textContent = this.translations.youText;
         });
@@ -191,14 +188,17 @@ export class BlackjackUI {
     }
 
     /**
-     * Update player displayed names. This will replace the text inside the
-     * `player-type-<i>` elements with the provided player names.
+     * Update player displayed names in the h2 header.
      * @param nombres Array of names for each player.
      */
     public actualizarNombres(nombres: string[]): void {
         nombres.forEach((nombre, i) => {
-            const tipoDiv = document.getElementById(`player-type-${i}`);
-            if (tipoDiv) tipoDiv.textContent = nombre || `Jugador ${i + 1}`;
+            const nameHeader = document.getElementById(`player-name-${i}`) as HTMLElement;
+            if (nameHeader) {
+                const scoreSpan = document.getElementById(`player-score-${i}`);
+                const currentScore = scoreSpan?.textContent || '0';
+                nameHeader.innerHTML = `${nombre || `${this.translations.playerLabel} ${i + 1}`}: <span id="player-score-${i}">${currentScore}</span>`;
+            }
         });
     }
 
@@ -236,6 +236,49 @@ export class BlackjackUI {
     public mostrarMensaje(mensaje: string): void { this.mensajesDiv.textContent = mensaje; }
 
     /**
+     * Shows result notification for a specific player (win/lose/push with amount)
+     * @param jugadorIndex The player index
+     * @param resultado 'win' | 'lose' | 'push'
+     * @param cantidad The amount won or lost
+     */
+    public mostrarResultadoJugador(jugadorIndex: number, resultado: 'win' | 'lose' | 'push', cantidad: number): void {
+        const playerArea = document.getElementById(`player-area-${jugadorIndex}`);
+        if (!playerArea) return;
+
+        // Remove any existing result notification
+        const existingNotif = playerArea.querySelector('.result-notification');
+        if (existingNotif) existingNotif.remove();
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.classList.add('result-notification', `result-${resultado}`);
+        
+        let mensaje = '';
+        let simbolo = '';
+        if (resultado === 'win') {
+            mensaje = `+${cantidad}€`;
+            simbolo = '✓';
+        } else if (resultado === 'lose') {
+            mensaje = `-${cantidad}€`;
+            simbolo = '✗';
+        } else {
+            mensaje = 'EMPATE';
+            simbolo = '=';
+        }
+
+        notification.innerHTML = `<span class="result-symbol">${simbolo}</span> ${mensaje}`;
+        playerArea.appendChild(notification);
+    }
+
+    /**
+     * Clears all result notifications from player areas
+     */
+    public limpiarResultados(): void {
+        const notifications = this.playersContainer.querySelectorAll('.result-notification');
+        notifications.forEach(n => n.remove());
+    }
+
+    /**
      * Clears the card areas and messages, and resets scores to zero.
      * @param numeroJugadores The number of players to clear areas for.
      */
@@ -247,6 +290,7 @@ export class BlackjackUI {
         }
         this.mensajesDiv.textContent = '';
         this.actualizarPuntuaciones(Array(numeroJugadores).fill(0), 0);
+        this.limpiarResultados();
     }
 
     /**

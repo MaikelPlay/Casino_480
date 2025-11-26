@@ -1,14 +1,34 @@
 import { PokerGame } from './poker/PokerGame.js';
 import { PokerUI } from './poker/PokerUI.js';
+import { initBackButton } from './backButton.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Inicialización del juego desde los parámetros de la URL
     const urlParams = new URLSearchParams(window.location.search);
     const saldoInicial = parseInt(urlParams.get('saldo') || '1000', 10);
     const numeroJugadores = parseInt(urlParams.get('jugadores') || '2', 10);
-    const urlLang = urlParams.get('lang');
-    const lang = urlLang || window.localStorage.getItem('lang') || ((navigator.languages && navigator.languages[0]) || navigator.language || 'es').toString().slice(0,2).toLowerCase();
+    const nombreJugador = urlParams.get('nombre') || 'Tú';
+    const lang = urlParams.get('lang') || window.localStorage.getItem('lang') || 'es';
 
-    // Instantiate UI and Game classes
+    // Initialize back button translation
+    initBackButton();
+
+    // Lógica del Panel de Reglas
+    const rulesToggleButton = document.getElementById('rules-toggle');
+    const rulesPanel = document.getElementById('rules-panel');
+    const closeRulesButton = document.getElementById('close-rules');
+
+    if (rulesToggleButton && rulesPanel && closeRulesButton) {
+        rulesToggleButton.addEventListener('click', () => {
+            rulesPanel.classList.add('open');
+        });
+
+        closeRulesButton.addEventListener('click', () => {
+            rulesPanel.classList.remove('open');
+        });
+    }
+
     const pokerUI = new PokerUI();
-    new PokerGame(pokerUI, numeroJugadores, saldoInicial, lang);
+    const game = new PokerGame(pokerUI, saldoInicial, lang, nombreJugador, numeroJugadores);
+    game.startHand();
 });

@@ -2,29 +2,29 @@ import { Carta, Rango } from '../common/Card.js';
 import { Jugador } from '../common/Player.js';
 
 /**
- * Represents a Blackjack player, extending the generic Player class.
- * Includes Blackjack-specific properties like score, balance, and dealer status,
- * as well as methods for calculating score and managing bets.
+ * Representa a un jugador de Blackjack, extendiendo la clase genérica Jugador.
+ * Incluye propiedades específicas de Blackjack como puntuación, saldo y estado del crupier,
+ * así como métodos para calcular la puntuación y gestionar las apuestas.
  */
 export class BlackjackPlayer extends Jugador {
     public puntuacion: number = 0;
     public cartera: number = 0;
     public esCrupier: boolean = false;
-    public esHumano: boolean = false; // true for the real human player
-    public activo: boolean = true; // false if the player is out for the round
-    public apuestaActual: number = 0; // current bet placed by this player for the round
+    public esHumano: boolean = false; // verdadero para el jugador humano real
+    public activo: boolean = true; // falso si el jugador está fuera de la ronda
+    public apuestaActual: number = 0; // apuesta actual realizada por este jugador para la ronda
 
     constructor(id: string, carteraInicial: number = 1000, esCrupier: boolean = false, esHumano: boolean = false) {
-        super(id); // Call the constructor of the base Jugador class
+        super(id); // Llama al constructor de la clase base Jugador
         this.cartera = carteraInicial;
         this.esCrupier = esCrupier;
         this.esHumano = esHumano;
     }
 
     /**
-     * Determines the Blackjack value of a card based on its rank.
-     * @param rango The rank of the card.
-     * @returns The Blackjack value of the card.
+     * Determina el valor de una carta en Blackjack según su rango.
+     * @param rango El rango de la carta.
+     * @returns El valor de la carta en Blackjack.
      */
     public static getBlackjackCardValue(rango: Rango): number {
         if (rango === 'as') return 11;
@@ -33,30 +33,30 @@ export class BlackjackPlayer extends Jugador {
     }
 
     /**
-     * Adds a card to the player's hand and recalculates the Blackjack score.
-     * Overrides the generic Jugador's agregarCarta to include score calculation.
-     * @param carta The card to add.
+     * Añade una carta a la mano del jugador y recalcula la puntuación de Blackjack.
+     * Sobrescribe el método agregarCarta del Jugador genérico para incluir el cálculo de la puntuación.
+     * @param carta La carta a añadir.
      */
     public agregarCarta(carta: Carta): void {
-        super.agregarCarta(carta); // Add the card to the hand using the base method
-        this.calcularPuntuacion(); // Recalculate score after adding a card
+        super.agregarCarta(carta); // Añade la carta a la mano usando el método base
+        this.calcularPuntuacion(); // Recalcula la puntuación después de añadir una carta
     }
 
     /**
-     * Recalculates the player's Blackjack score based on their hand.
-     * Handles Ace values (11 or 1).
+     * Recalcula la puntuación de Blackjack del jugador en función de su mano.
+     * Maneja los valores del As (11 o 1).
      */
     private calcularPuntuacion(): void {
         this.puntuacion = 0;
         let ases = this.mano.filter(c => c.rango === 'as').length;
         
-        // Calculate initial score assuming Aces are 11
+        // Calcula la puntuación inicial asumiendo que los Ases valen 11
         this.puntuacion = this.mano.reduce((total, carta) => {
-            // Need to get the value for each card using the Blackjack specific logic
+            // Es necesario obtener el valor de cada carta usando la lógica específica de Blackjack
             return total + BlackjackPlayer.getBlackjackCardValue(carta.rango);
         }, 0);
 
-        // Adjust for Aces if score exceeds 21
+        // Ajusta por los Ases si la puntuación supera 21
         while (this.puntuacion > 21 && ases > 0) {
             this.puntuacion -= 10;
             ases--;
@@ -64,17 +64,17 @@ export class BlackjackPlayer extends Jugador {
     }
     
     /**
-     * Resets the player's hand and score for a new round.
+     * Reinicia la mano y la puntuación del jugador para una nueva ronda.
      */
     public reiniciarMano(): void {
-        super.reiniciarMano(); // Clear the hand using the base method
-        this.puntuacion = 0; // Reset Blackjack score
+        super.reiniciarMano(); // Limpia la mano usando el método base
+        this.puntuacion = 0; // Reinicia la puntuación de Blackjack
     }
 
     /**
-     * Attempts to place a bet.
-     * @param cantidad The amount to bet.
-     * @returns True if the bet was successful, false otherwise (insufficient funds).
+     * Intenta realizar una apuesta.
+     * @param cantidad La cantidad a apostar.
+     * @returns Verdadero si la apuesta fue exitosa, falso en caso contrario (fondos insuficientes).
      */
     public apostar(cantidad: number): boolean {
         if (cantidad > this.cartera) return false;
@@ -84,15 +84,15 @@ export class BlackjackPlayer extends Jugador {
     }
 
     /**
-     * Adds winnings to the player's balance.
-     * @param cantidad The amount won.
+     * Añade las ganancias al saldo del jugador.
+     * @param cantidad La cantidad ganada.
      */
     public ganar(cantidad: number): void {
         this.cartera += cantidad;
     }
 
     /**
-     * Bet all remaining funds (all-in). Returns false if no funds.
+     * Apuesta todos los fondos restantes (all-in). Devuelve falso si no hay fondos.
      */
     public apostarTodo(): boolean {
         if (this.cartera <= 0) return false;
@@ -102,7 +102,7 @@ export class BlackjackPlayer extends Jugador {
     }
 
     /**
-     * Reset per-round state like apuestaActual and activo.
+     * Reinicia el estado por ronda como apuestaActual y activo.
      */
     public reiniciarParaRonda(): void {
         this.apuestaActual = 0;

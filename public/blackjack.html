@@ -11,6 +11,7 @@
     <script type="module" src="../dist/blackjack.js" defer></script>
 </head>
 <body>
+    <a href="index.html" class="back-button" title="Volver al inicio">← Inicio</a>
     <div id="game-container" class="game-container">
         <h1>Blackjack</h1>
 
@@ -24,12 +25,9 @@
         <div id="players-container" class="players-container"></div>
 
         <div class="betting-area">
-            <div class="balance">
-                Cartera: $<span id="player-balance">1000</span>
-            </div>
             <div class="bet-controls">
                 <button id="decrease-bet-button">-</button>
-                <span class="current-bet">Apuesta: $<span id="current-bet">10</span></span>
+                <span class="current-bet">Apuesta: <span id="current-bet">10</span>€</span>
                 <button id="increase-bet-button">+</button>
                 <button id="bet-button">Apostar</button>
             </div>
