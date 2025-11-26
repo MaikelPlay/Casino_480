@@ -7,7 +7,6 @@ export class PokerUI {
     private potDiv: HTMLElement | null = document.getElementById('pot');
     private mensajesDiv: HTMLElement | null = document.getElementById('messages');
     private phaseIndicator: HTMLElement | null = document.getElementById('phase-indicator');
-    private dealerButton: HTMLElement | null = document.getElementById('dealer-button');
     private currentLang = 'es';
     private translations: { [k: string]: string } = {
         potLabel: 'Bote',
@@ -61,17 +60,18 @@ export class PokerUI {
     }
 
     updateDealerButton(dealerIndex: number, players: PokerPlayer[]): void {
-        if (!this.dealerButton || players.length === 0) return;
+        if (players.length === 0) return;
+        
+        // Limpiar todos los botones de dealer existentes
+        document.querySelectorAll('.dealer-button').forEach(el => el.remove());
         
         const dealerArea = document.getElementById(`player-area-${players[dealerIndex].id}`);
         if (dealerArea) {
-            const rect = dealerArea.getBoundingClientRect();
-            const containerRect = this.dealerButton.parentElement?.getBoundingClientRect();
-            
-            if (containerRect) {
-                this.dealerButton.style.left = `${rect.left - containerRect.left + rect.width / 2 - 20}px`;
-                this.dealerButton.style.top = `${rect.top - containerRect.top - 25}px`;
-            }
+            // Crear un nuevo botón de dealer dentro del área del jugador
+            const dealerBtn = document.createElement('div');
+            dealerBtn.className = 'dealer-button';
+            dealerBtn.textContent = 'D';
+            dealerArea.appendChild(dealerBtn);
         }
     }
 
