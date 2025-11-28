@@ -34,10 +34,35 @@ export class PokerUI {
     private allinButton: HTMLButtonElement | null = document.getElementById('allin-button') as HTMLButtonElement;
     private raiseButton: HTMLButtonElement | null = document.getElementById('raise-button') as HTMLButtonElement;
     private raiseAmountInput: HTMLInputElement | null = document.getElementById('raise-amount') as HTMLInputElement;
+    private increaseButton: HTMLButtonElement | null = document.getElementById('increase-amount') as HTMLButtonElement;
+    private decreaseButton: HTMLButtonElement | null = document.getElementById('decrease-amount') as HTMLButtonElement;
     private playerActionResolver: ((value: { type: string; amount?: number }) => void) | null = null;
 
     constructor() {
         this.disableActionButtons();
+        this.setupAmountButtons();
+    }
+
+    private setupAmountButtons(): void {
+        this.increaseButton?.addEventListener('click', () => {
+            if (this.raiseAmountInput && !this.raiseAmountInput.disabled) {
+                const currentValue = parseInt(this.raiseAmountInput.value, 10) || 0;
+                const step = parseInt(this.raiseAmountInput.step, 10) || 10;
+                const max = parseInt(this.raiseAmountInput.max, 10) || Infinity;
+                const newValue = Math.min(currentValue + step, max);
+                this.raiseAmountInput.value = newValue.toString();
+            }
+        });
+
+        this.decreaseButton?.addEventListener('click', () => {
+            if (this.raiseAmountInput && !this.raiseAmountInput.disabled) {
+                const currentValue = parseInt(this.raiseAmountInput.value, 10) || 0;
+                const step = parseInt(this.raiseAmountInput.step, 10) || 10;
+                const min = parseInt(this.raiseAmountInput.min, 10) || 0;
+                const newValue = Math.max(currentValue - step, min);
+                this.raiseAmountInput.value = newValue.toString();
+            }
+        });
     }
 
     log(msg: string) {
@@ -285,16 +310,26 @@ export class PokerUI {
             this.allinButton.disabled = (playerStack === 0);
         }
 
+        const canRaiseAmount = canRaise && playerStack > minCall;
+        
         if (this.raiseButton) {
-            this.raiseButton.disabled = !canRaise || playerStack <= minCall;
+            this.raiseButton.disabled = !canRaiseAmount;
         }
         
         if (this.raiseAmountInput) {
-            this.raiseAmountInput.disabled = !canRaise || playerStack <= minCall;
+            this.raiseAmountInput.disabled = !canRaiseAmount;
             const theoreticalMinTotalRaise = lastBet + minRaise;
             this.raiseAmountInput.min = theoreticalMinTotalRaise.toString();
             this.raiseAmountInput.value = theoreticalMinTotalRaise.toString();
             this.raiseAmountInput.max = playerStack.toString();
+        }
+        
+        if (this.increaseButton) {
+            this.increaseButton.disabled = !canRaiseAmount;
+        }
+        
+        if (this.decreaseButton) {
+            this.decreaseButton.disabled = !canRaiseAmount;
         }
 
         if (this.callButton) {
@@ -309,6 +344,8 @@ export class PokerUI {
         if (this.allinButton) this.allinButton.disabled = true;
         if (this.raiseButton) this.raiseButton.disabled = true;
         if (this.raiseAmountInput) this.raiseAmountInput.disabled = true;
+        if (this.increaseButton) this.increaseButton.disabled = true;
+        if (this.decreaseButton) this.decreaseButton.disabled = true;
         if (this.callButton) this.callButton.textContent = this.translations.callButton;
     }
 

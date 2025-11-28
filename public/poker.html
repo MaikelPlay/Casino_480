@@ -77,7 +77,11 @@
             <button id="allin-button">All In</button>
             <div class="raise-container">
                 <button id="raise-button">Subir</button>
-                <input type="number" id="raise-amount" value="20" min="20" step="10">
+                <div class="amount-control">
+                    <button class="amount-btn decrease" id="decrease-amount">−</button>
+                    <input type="number" id="raise-amount" value="20" min="20" step="10">
+                    <button class="amount-btn increase" id="increase-amount">+</button>
+                </div>
             </div>
         </div>
         

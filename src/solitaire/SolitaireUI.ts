@@ -11,37 +11,9 @@ export class SolitaireUI {
         this.setupEventListeners();
     }
 
-    private playSound(soundName: string): void {
-        try {
-            const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            // Configuración según el tipo de sonido
-            const soundConfig: { [key: string]: { freq: number; vol: number; dur: number } } = {
-                'cardDraw': { freq: 800, vol: 0.08, dur: 0.05 },
-                'cardPlace': { freq: 600, vol: 0.1, dur: 0.08 },
-                'cardToFoundation': { freq: 1000, vol: 0.15, dur: 0.1 },
-                'cardFlip': { freq: 700, vol: 0.09, dur: 0.06 },
-                'success': { freq: 1200, vol: 0.18, dur: 0.15 }
-            };
-
-            const config = soundConfig[soundName] || soundConfig['cardPlace'];
-
-            oscillator.frequency.value = config.freq;
-            oscillator.type = 'sine';
-            
-            gainNode.gain.setValueAtTime(config.vol, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + config.dur);
-
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + config.dur);
-        } catch (e) {
-            // Silenciosamente fallar si el audio no está disponible
-        }
+    // Sonidos deshabilitados
+    private playSound(_soundName: string): void {
+        // Sin sonidos
     }
 
     public setGame(game: SolitaireGame): void {
