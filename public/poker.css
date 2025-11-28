@@ -180,8 +180,8 @@ body {
 }
 
 .player-cards .card {
-    width: clamp(45px, 6vw, 60px);
-    height: clamp(63px, 8.4vw, 84px);
+    width: clamp(55px, 7.5vw, 75px);
+    height: clamp(77px, 10.5vw, 105px);
     transition: all 0.3s ease;
     flex-shrink: 0;
 }
@@ -252,19 +252,19 @@ body {
     width: clamp(65px, 9vw, 82px);
     height: clamp(91px, 12.6vw, 115px);
     flex-shrink: 0;
-    /* Animación lenta estilo portada */
-    animation: cardDeal 1.5s ease-out;
+    /* Animación solo en la primera aparición */
+    animation: cardDeal 0.5s ease-out;
     animation-fill-mode: forwards;
 }
 
 @keyframes cardDeal {
-    from {
-        transform: translateY(50px);
+    0% {
         opacity: 0;
+        transform: translateY(-50px) rotateY(180deg) scale(0.5);
     }
-    to {
-        transform: translateY(0);
+    100% {
         opacity: 1;
+        transform: translateY(0) rotateY(0) scale(1);
     }
 }
 
@@ -745,4 +745,98 @@ body {
         width: 80px;
         font-size: 1rem;
     }
+}
+
+/* Result notification para poker - igual que blackjack */
+.player-area-poker .result-notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.98);
+    color: white;
+    padding: clamp(6px, 1.2vh, 10px) clamp(12px, 2.5vw, 16px);
+    border-radius: 8px;
+    font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+    font-weight: 800;
+    text-align: center;
+    z-index: 200;
+    border: 2px solid;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 20px;
+    animation: resultFadeIn 0.4s ease-out;
+    min-width: clamp(110px, 18vw, 140px);
+    white-space: nowrap;
+}
+
+@keyframes resultFadeInPoker {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.player-area-poker .result-notification .result-symbol {
+    display: inline-block;
+    font-size: 1.15em;
+    margin-right: 5px;
+}
+
+/* Win result - green */
+.player-area-poker .result-notification.result-win {
+    border-color: #00ff00;
+    color: #00ff00;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+/* Lose result - red */
+.player-area-poker .result-notification.result-lose {
+    border-color: #ff0000;
+    color: #ff0000;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+/* Push result - yellow/gold */
+.player-area-poker .result-notification.result-push {
+    border-color: #ffd700;
+    color: #ffd700;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Botón de continuar jugando */
+#continue-button {
+    margin-top: 15px;
+    padding: clamp(10px, 1.5vh, 14px) clamp(25px, 4vw, 35px);
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    background: linear-gradient(145deg, #2f9e44, #087f5b);
+    color: white;
+    border: 2px solid #51cf66;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    box-shadow: 
+        0 6px 15px rgba(0,0,0,0.5),
+        0 0 20px rgba(47,158,68,0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#continue-button:hover {
+    background: linear-gradient(145deg, #37b24d, #0ca678);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 10px 25px rgba(0,0,0,0.6),
+        0 0 30px rgba(55,178,77,0.4);
+}
+
+#continue-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+    box-shadow: none;
 }

@@ -260,7 +260,7 @@ export class PokerGame {
             }
         }
     
-        this.endBettingRound();
+        await this.endBettingRound();
     }
     
     handlePlayerAction(player: PokerPlayer, action: { type: string, amount?: number }) {
@@ -311,7 +311,7 @@ export class PokerGame {
         } while (this.players[this.currentPlayerIndex].stack === 0);
     }
 
-    endBettingRound() {
+    async endBettingRound() {
         console.log('[GAME] --- Ending Betting Round ---');
         this.players.forEach(p => { p.currentBet = 0; });
         this.lastBet = 0;
@@ -324,7 +324,7 @@ export class PokerGame {
         }
 
         if (this.players.filter(p => p.inHand).length <= 1) {
-            this.resolveShowdown();
+            await this.resolveShowdown();
             return;
         }
 
@@ -359,12 +359,12 @@ export class PokerGame {
             case GamePhase.RIVER:
                 this.phase = GamePhase.SHOWDOWN;
                 console.log('[GAME] Phase -> SHOWDOWN');
-                this.resolveShowdown();
+                await this.resolveShowdown();
                 break;
         }
     }
 
-    resolveShowdown() {
+    async resolveShowdown() {
         console.log('[GAME] --- Resolving Showdown ---');
         this.ui.displayShowdownMessage();
         this.ui.revealAllHoleCards(this.players);
@@ -415,10 +415,27 @@ export class PokerGame {
             });
         }
         
+        // Mostrar resultados para cada jugador
+        this.players.forEach(player => {
+            const initialStack = player.stack - (player.currentBet || 0);
+            const finalStack = player.stack;
+            const difference = finalStack - (initialStack + (player.currentBet || 0));
+            
+            if (difference > 0) {
+                (this.ui as any).mostrarResultadoJugador(player.id, 'win', Math.abs(difference));
+            } else if (difference < 0) {
+                (this.ui as any).mostrarResultadoJugador(player.id, 'lose', Math.abs(difference));
+            } else if (player.inHand) {
+                (this.ui as any).mostrarResultadoJugador(player.id, 'push', 0);
+            }
+        });
+        
         this.pots = [];
         this.dealerIndex = (this.dealerIndex + 1) % this.players.length;
 
-        setTimeout(() => this.startHand(), 5000);
+        // Esperar a que el jugador haga click en continuar
+        await (this.ui as any).esperarContinuar();
+        this.startHand();
     }
 
     private sleep(ms: number): Promise<void> {

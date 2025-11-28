@@ -33,10 +33,24 @@ export class PokerUI {
     private callButton: HTMLButtonElement | null = document.getElementById('call-button') as HTMLButtonElement;
     private raiseButton: HTMLButtonElement | null = document.getElementById('raise-button') as HTMLButtonElement;
     private raiseAmountInput: HTMLInputElement | null = document.getElementById('raise-amount') as HTMLInputElement;
+    private continueButton: HTMLButtonElement | null = document.getElementById('continue-button') as HTMLButtonElement;
     private playerActionResolver: ((value: { type: string; amount?: number }) => void) | null = null;
+    private continueResolver: (() => void) | null = null;
 
     constructor() {
         this.disableActionButtons();
+        this.setupContinueButton();
+    }
+
+    private setupContinueButton() {
+        if (this.continueButton) {
+            this.continueButton.addEventListener('click', () => {
+                if (this.continueResolver) {
+                    this.continueResolver();
+                    this.continueResolver = null;
+                }
+            });
+        }
     }
 
     log(msg: string) {
@@ -462,5 +476,64 @@ export class PokerUI {
         });
         // Sonido de revelar cartas
         this.soundEffects.playCardFlip();
+    }
+
+    /**
+     * Muestra el resultado de un jugador (ganancia o pérdida)
+     */
+    public mostrarResultadoJugador(jugadorId: string, resultado: 'win' | 'lose' | 'push', cantidad: number): void {
+        const playerArea = document.getElementById(`player-area-${jugadorId}`);
+        if (!playerArea) return;
+
+        // Eliminar notificación existente
+        const existingNotif = playerArea.querySelector('.result-notification');
+        if (existingNotif) existingNotif.remove();
+
+        // Crear notificación
+        const notification = document.createElement('div');
+        notification.classList.add('result-notification', `result-${resultado}`);
+        
+        let mensaje = '';
+        let simbolo = '';
+        if (resultado === 'win') {
+            mensaje = `+${cantidad}€`;
+            simbolo = '✓';
+        } else if (resultado === 'lose') {
+            mensaje = `-${cantidad}€`;
+            simbolo = '✗';
+        } else {
+            mensaje = 'EMPATE';
+            simbolo = '=';
+        }
+
+        notification.innerHTML = `<span class="result-symbol">${simbolo}</span> ${mensaje}`;
+        playerArea.appendChild(notification);
+    }
+
+    /**
+     * Limpia todas las notificaciones de resultado
+     */
+    public limpiarResultados(): void {
+        const notifications = document.querySelectorAll('.result-notification');
+        notifications.forEach(n => n.remove());
+    }
+
+    /**
+     * Muestra el botón de continuar y espera a que se haga click
+     */
+    public async esperarContinuar(): Promise<void> {
+        return new Promise((resolve) => {
+            if (this.continueButton) {
+                this.continueButton.style.display = 'inline-block';
+                this.continueButton.disabled = false;
+                this.continueResolver = () => {
+                    this.continueButton!.style.display = 'none';
+                    this.limpiarResultados();
+                    resolve();
+                };
+            } else {
+                resolve();
+            }
+        });
     }
 }
