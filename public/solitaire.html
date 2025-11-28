@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solitario</title>
+    <link rel="icon" type="image/png" href="assets/Baraja/corazones_as.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="solitaire.css">
+    <script type="module" src="../dist/solitaire.js" defer></script>
+</head>
+<body>
+    <a href="index.html" class="back-button" title="Volver al inicio">← Inicio</a>
+    <button id="rules-toggle" class="rules-toggle-button">Reglas</button>
+    <div id="rules-panel" class="side-panel">
+        <h2>Solitario Klondike</h2>
+        <button id="close-rules" class="close-button">✕</button>
+        
+        <h4>Objetivo</h4>
+        <p>Mover todas las cartas a las 4 pilas de fundación, ordenadas por palo desde el As hasta el Rey.</p>
+        
+        <h4>Estructura del Juego</h4>
+        <ul>
+            <li><strong>Mazo:</strong> Cartas restantes para robar</li>
+            <li><strong>Descarte:</strong> Cartas robadas del mazo</li>
+            <li><strong>Fundaciones:</strong> 4 pilas (una por palo) donde se construye de As a Rey</li>
+            <li><strong>Tableau:</strong> 7 columnas donde se juega</li>
+        </ul>
+        
+        <h4>Reglas del Tableau</h4>
+        <ul>
+            <li>Las cartas se colocan en orden descendente (Rey a As)</li>
+            <li>Deben alternarse colores (rojo-negro-rojo...)</li>
+            <li>Solo un Rey puede ocupar un espacio vacío</li>
+            <li>Puedes mover grupos de cartas si están ordenadas correctamente</li>
+        </ul>
+        
+        <h4>Reglas de las Fundaciones</h4>
+        <ul>
+            <li>Comienzan con un As</li>
+            <li>Se construyen en orden ascendente (As, 2, 3... Rey)</li>
+            <li>Solo cartas del mismo palo</li>
+        </ul>
+        
+        <h4>Cómo Jugar</h4>
+        <ol>
+            <li>Haz clic en el mazo para robar cartas</li>
+            <li>Arrastra cartas entre columnas del tableau</li>
+            <li>Haz doble clic en una carta para moverla automáticamente a la fundación</li>
+            <li>Voltea cartas boca abajo haciendo clic en ellas</li>
+        </ol>
+        
+        <h4>Puntuación</h4>
+        <ul>
+            <li>Carta a fundación: +10 puntos</li>
+            <li>Voltear carta del tableau: +5 puntos</li>
+            <li>Carta de fundación a tableau: -15 puntos</li>
+        </ul>
+    </div>
+
+    <div class="solitaire-container">
+        <div class="game-header">
+            <div class="game-info">
+                <div class="score-display">
+                    <span class="label">Puntuación:</span>
+                    <span id="score" class="value">0</span>
+                </div>
+                <div class="moves-display">
+                    <span class="label">Movimientos:</span>
+                    <span id="moves" class="value">0</span>
+                </div>
+                <div class="time-display">
+                    <span class="label">Tiempo:</span>
+                    <span id="time" class="value">0:00</span>
+                </div>
+            </div>
+            <div class="game-controls">
+                <button id="new-game-button" class="control-button">Nuevo Juego</button>
+                <button id="undo-button" class="control-button" disabled>Deshacer</button>
+                <button id="hint-button" class="control-button">Pista</button>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div class="top-row">
+                <div class="stock-waste">
+                    <div id="stock" class="card-pile stock-pile">
+                        <div class="empty-pile">Mazo</div>
+                    </div>
+                    <div id="waste" class="card-pile waste-pile">
+                        <div class="empty-pile">Descarte</div>
+                    </div>
+                </div>
+                <div class="foundations">
+                    <div id="foundation-0" class="card-pile foundation-pile" data-suit="corazones">
+                        <div class="empty-pile">♥</div>
+                    </div>
+                    <div id="foundation-1" class="card-pile foundation-pile" data-suit="rombo">
+                        <div class="empty-pile">♦</div>
+                    </div>
+                    <div id="foundation-2" class="card-pile foundation-pile" data-suit="picas">
+                        <div class="empty-pile">♠</div>
+                    </div>
+                    <div id="foundation-3" class="card-pile foundation-pile" data-suit="trebol">
+                        <div class="empty-pile">♣</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tableau">
+                <div id="tableau-0" class="tableau-column" data-column="0"></div>
+                <div id="tableau-1" class="tableau-column" data-column="1"></div>
+                <div id="tableau-2" class="tableau-column" data-column="2"></div>
+                <div id="tableau-3" class="tableau-column" data-column="3"></div>
+                <div id="tableau-4" class="tableau-column" data-column="4"></div>
+                <div id="tableau-5" class="tableau-column" data-column="5"></div>
+                <div id="tableau-6" class="tableau-column" data-column="6"></div>
+            </div>
+        </div>
+
+        <div id="win-message" class="win-message hidden">
+            <div class="win-content">
+                <h2>¡Felicidades!</h2>
+                <p>Has completado el solitario</p>
+                <div class="win-stats">
+                    <p>Puntuación: <span id="final-score"></span></p>
+                    <p>Movimientos: <span id="final-moves"></span></p>
+                    <p>Tiempo: <span id="final-time"></span></p>
+                </div>
+                <button id="play-again-button" class="control-button">Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

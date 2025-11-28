@@ -1,11 +1,12 @@
 # Casino 480
 
 ## Descripción
-Casino 480 es una aplicación de casino del lado del cliente, basada en navegador, que actualmente cuenta con los populares juegos de cartas Blackjack y Poker. Los usuarios comienzan en una página de inicio donde pueden seleccionar un juego, establecer su nombre, saldo inicial y el número de jugadores. La aplicación está diseñada para ser multilingüe e incluye oponentes de IA simples para experiencias de un solo jugador.
+Casino 480 es una aplicación de casino del lado del cliente, basada en navegador, que actualmente cuenta con los populares juegos de cartas Blackjack, Poker y Solitario. Los usuarios comienzan en una página de inicio donde pueden seleccionar un juego, establecer su nombre, saldo inicial y el número de jugadores. La aplicación está diseñada para ser multilingüe e incluye oponentes de IA simples para experiencias de un solo jugador.
 
 ## Características
 *   **Juego de Blackjack:** Juega contra un crupier con configuraciones personalizables.
 *   **Juego de Poker:** Participa en rondas de póker con oponentes de IA.
+*   **Juego de Solitario:** Disfruta del clásico Solitario Klondike con sistema de puntuación, deshacer movimientos y pistas.
 *   **Soporte Multilingüe:** La aplicación admite varios idiomas, configurables desde la página de inicio.
 *   **Configuraciones de Juego Personalizables:** Los usuarios pueden establecer su nombre, saldo inicial y el número de jugadores para cada juego.
 *   **Oponentes de IA Simples:** Proporciona una IA básica para jugar contra el ordenador.
@@ -66,11 +67,13 @@ npm test
 │   ├───index.html            # Página de inicio
 │   ├───blackjack.html        # Página del juego de Blackjack
 │   ├───poker.html            # Página del juego de Poker
+│   ├───solitaire.html        # Página del juego de Solitario
 │   ├───styles.css            # Estilos generales
 │   └───assets/               # Recursos del juego (imágenes de cartas, fondos)
 ├───src/
 │   ├───blackjack.ts          # Inicialización del juego de Blackjack
 │   ├───poker.ts              # Inicialización del juego de Poker
+│   ├───solitaire.ts          # Inicialización del juego de Solitario
 │   ├───landing.ts            # Lógica de la página de inicio
 │   ├───i18n.ts               # Configuración de internacionalización
 │   ├───common/               # Lógica de juego compartida (Carta, Mazo, Jugador)
@@ -82,12 +85,16 @@ npm test
 │   │   ├───BlackjackPlayer.ts# Modelo de jugador de Blackjack
 │   │   ├───BlackjackUI.ts    # Gestión de la UI de Blackjack
 │   │   └───types.ts
-│   └───poker/                # Módulos específicos de Poker
-│       ├───PokerGame.ts      # Lógica central del juego de Poker
-│       ├───PokerPlayer.ts    # Modelo de jugador de Poker
-│       ├───PokerUI.ts        # Gestión de la UI de Poker
-│       ├───ai.ts             # Lógica de la IA de Poker
-│       ├───evaluator.ts      # Evaluador de manos de Poker
+│   ├───poker/                # Módulos específicos de Poker
+│   │   ├───PokerGame.ts      # Lógica central del juego de Poker
+│   │   ├───PokerPlayer.ts    # Modelo de jugador de Poker
+│   │   ├───PokerUI.ts        # Gestión de la UI de Poker
+│   │   ├───ai.ts             # Lógica de la IA de Poker
+│   │   ├───evaluator.ts      # Evaluador de manos de Poker
+│   │   └───types.ts
+│   └───solitaire/            # Módulos específicos de Solitario
+│       ├───SolitaireGame.ts  # Lógica central del juego de Solitario
+│       ├───SolitaireUI.ts    # Gestión de la UI de Solitario
 │       └───types.ts
 └───tests/
     ├───blackjack/
