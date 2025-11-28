@@ -18,8 +18,8 @@
 
 .landing-container h1 {
     font-family: 'Playfair Display', serif; /* Fuente más elegante */
-    font-size: 6rem; /* Más grande */
-    margin-bottom: 2rem;
+    font-size: 4rem; /* Reducido para mejor ajuste */
+    margin-bottom: 1.5rem;
     text-shadow: 3px 3px 6px #000000, 0 0 20px #ffd700; /* Sombra más pronunciada y brillo dorado */
     animation: fadeInDown 1.5s ease-out;
 }
@@ -52,14 +52,14 @@
 
 .game-selection {
     display: flex;
-    gap: 2rem;
-    margin-bottom: 3rem; /* Más espacio */
+    gap: 1.5rem;
+    margin-bottom: 2rem; /* Reducido */
     animation: fadeInUp 1.5s ease-out 0.5s backwards; /* Animación con retraso */
 }
 
 .game-option {
-    padding: 1rem 2.5rem;
-    font-size: 1.8rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.4rem;
     font-family: 'Cinzel', serif; /* Fuente de estilo casino */
     background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
     border: 3px solid #ffd700;
@@ -80,17 +80,17 @@
 }
 
 .balance-selection {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     animation: fadeInUp 1.5s ease-out 1s backwards;
 }
 
 .name-selection {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     animation: fadeInUp 1.5s ease-out 1.1s backwards;
 }
 
 .balance-selection label, .name-selection label {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-right: 1rem;
     color: #eee;
     text-shadow: 1px 1px 2px #000;
@@ -105,9 +105,9 @@
 }
 
 .balance-selection input, .name-selection input {
-    padding: 0.8rem;
-    font-size: 1.5rem;
-    width: 200px;
+    padding: 0.6rem;
+    font-size: 1.2rem;
+    width: 180px;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.7);
     border: 2px solid #ffd700;
@@ -122,12 +122,12 @@
 }
 
 .player-selection {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     animation: fadeInUp 1.5s ease-out 1.2s backwards;
 }
 
 .player-selection label {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-right: 1rem;
     color: #eee;
     text-shadow: 1px 1px 2px #000;
@@ -142,9 +142,9 @@
 }
 
 .player-selection select {
-    padding: 0.8rem;
-    font-size: 1.5rem;
-    width: 200px;
+    padding: 0.6rem;
+    font-size: 1.2rem;
+    width: 180px;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.7);
     border: 2px solid #ffd700;
@@ -154,8 +154,8 @@
 }
 
 #start-game-button {
-    padding: 1.2rem 4rem;
-    font-size: 2rem;
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
     font-family: 'Trajan Pro', serif;
     background: linear-gradient(145deg, #b22222, #800000);
     color: white;
@@ -167,6 +167,7 @@
     text-transform: uppercase;
     letter-spacing: 3px;
     animation: pulse 2s infinite, fadeInUp 1.5s ease-out 1.5s backwards;
+    margin-bottom: 2rem; /* Espacio inferior para evitar corte */
 }
 
 #start-game-button:hover {

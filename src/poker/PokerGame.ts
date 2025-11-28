@@ -38,7 +38,7 @@ export class PokerGame {
         this.players.push(new PokerPlayer('0', humanName || 'Tú', true, initialStack));
         
         // Crear jugadores IA
-        const aiNames = ['IA 1', 'IA 2', 'IA 3'];
+        const aiNames = ['Jugador 1', 'Jugador 2', 'Jugador 3'];
         for (let i = 1; i < playerCount; i++) {
             this.players.push(new PokerPlayer(i.toString(), aiNames[i - 1], false, initialStack));
         }

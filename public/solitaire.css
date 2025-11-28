@@ -1,0 +1,909 @@
+html {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-image: url('./assets/portada6.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.solitaire-container {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    padding-top: 130px;
+    overflow-x: hidden !important;
+}
+
+.game-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(20px, 4vw, 60px);
+    background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,20,0.9) 100%);
+    padding: clamp(10px, 1.2vh, 15px) clamp(12px, 1.5vw, 20px);
+    border-bottom: 2px solid rgba(255,215,0,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.9);
+    backdrop-filter: blur(15px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.game-info {
+    display: flex;
+    gap: clamp(15px, 2.5vw, 30px);
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.score-display, .moves-display, .time-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: clamp(70px, 10vw, 100px);
+    flex-shrink: 0;
+}
+
+.score-display .label, .moves-display .label, .time-display .label {
+    font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.score-display .value, .moves-display .value, .time-display .value {
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(255,215,0,0.5);
+    white-space: nowrap;
+}
+
+.game-controls {
+    display: flex;
+    gap: clamp(8px, 1.5vw, 12px);
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+
+.control-button {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    padding: clamp(7px, 1vh, 10px) clamp(12px, 2vw, 18px);
+    border-radius: 10px;
+    border: 2px solid #ffd700;
+    cursor: pointer;
+    font-weight: 700;
+    background: linear-gradient(145deg, #1971c2, #0c4a6e);
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.control-button:hover:not(:disabled) {
+    background: linear-gradient(145deg, #1c7ed6, #1971c2);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+.control-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
+
+.game-board {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 1.5vh, 20px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 clamp(8px, 1.2vw, 18px) clamp(8px, 1.2vh, 15px);
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    gap: clamp(12px, 1.8vw, 22px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.stock-waste {
+    display: flex;
+    gap: clamp(22px, 3.5vw, 40px);
+}
+
+.foundations {
+    display: flex;
+    gap: clamp(8px, 1.2vw, 13px);
+}
+
+.card-pile {
+    width: clamp(80px, 10vw, 110px);
+    height: clamp(112px, 14vw, 154px);
+    border-radius: 10px;
+    position: relative;
+    transition: all 0.3s ease;
+    min-height: clamp(112px, 14vw, 154px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-pile .card {
+    position: static !important;
+    transform: none !important;
+}
+
+.empty-pile {
+    width: 100%;
+    height: 100%;
+    border: 3px dashed rgba(255,215,0,0.4);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    color: rgba(255,215,0,0.3);
+    font-weight: 700;
+    background: rgba(0,0,0,0.3);
+    font-family: 'Cinzel', serif;
+}
+
+.stock-pile {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stock-pile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255,215,0,0.3);
+}
+
+.stock-pile:active {
+    transform: scale(0.95);
+}
+
+.stock-pile.drawing {
+    animation: drawCard 0.3s ease-out;
+}
+
+@keyframes drawCard {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.9) translateX(10px);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.foundation-pile.drag-over {
+    border: 3px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    animation: pulseGlow 0.8s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0,255,0,0.8);
+    }
+}
+
+.foundation-pile.receiving {
+    animation: receiveCard 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes receiveCard {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(255,215,0,0.8);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.tableau {
+    display: flex;
+    gap: clamp(6px, 1vw, 12px);
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.tableau-column {
+    width: clamp(80px, 10vw, 110px);
+    min-height: 280px;
+    position: relative;
+    border-radius: 10px;
+}
+
+.tableau-column.empty {
+    border: 3px dashed rgba(255,215,0,0.3);
+    background: rgba(0,0,0,0.2);
+}
+
+.tableau-column.drag-over {
+    border: 3px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    animation: pulseGlow 0.8s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+.card {
+    width: clamp(80px, 10vw, 110px);
+    height: clamp(112px, 14vw, 154px);
+    position: absolute;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    pointer-events: auto;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.card.animating {
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card.flipping {
+    animation: flipCard 0.6s ease-in-out;
+}
+
+@keyframes flipCard {
+    0% {
+        transform: rotateY(0deg);
+    }
+    50% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(0deg);
+    }
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    display: block;
+    pointer-events: none;
+}
+
+.card.face-down {
+    cursor: default;
+}
+
+.card.face-down img {
+    content: url('./assets/Baraja/atras.png');
+}
+
+.card.dragging {
+    opacity: 0.85;
+    z-index: 1000 !important;
+    transform: rotate(3deg) scale(1.08);
+    box-shadow: 0 12px 30px rgba(255,215,0,0.6);
+    transition: none;
+}
+
+.card.moving-to-foundation {
+    animation: moveToFoundation 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes moveToFoundation {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.1) translateY(-8px);
+    }
+    70% {
+        transform: scale(1.02) translateY(-2px);
+    }
+    100% {
+        transform: scale(1) translateY(0);
+    }
+}
+
+.card.dealing {
+    animation: dealCard 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes dealCard {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.8);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.card.draggable:hover {
+    transform: translateY(-5px) scale(1.03);
+    z-index: 1000 !important;
+    box-shadow: 0 8px 20px rgba(255,215,0,0.6);
+    cursor: grab;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card.success-bounce {
+    animation: successBounce 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes successBounce {
+    0% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.08);
+    }
+    60% {
+        transform: scale(0.98);
+    }
+    80% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.card.hint-highlight {
+    animation: hint-pulse 1s ease-in-out 3;
+    z-index: 50;
+}
+
+@keyframes hint-pulse {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0,255,0,0.8), 0 0 50px rgba(0,255,0,0.5);
+        transform: scale(1.1);
+    }
+}
+
+.win-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(10px);
+}
+
+.win-message.hidden {
+    display: none;
+}
+
+.win-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    padding: clamp(30px, 5vh, 50px);
+    border-radius: 20px;
+    border: 4px solid #ffd700;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    text-align: center;
+    color: white;
+    animation: winAppear 0.5s ease-out;
+}
+
+@keyframes winAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.win-content h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #ffd700;
+    margin: 0 0 15px 0;
+    text-shadow: 0 0 20px rgba(255,215,0,0.6);
+}
+
+.win-content p {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    margin: 10px 0;
+}
+
+.win-stats {
+    margin: 25px 0;
+    padding: 20px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 10px;
+}
+
+.win-stats p {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-weight: 700;
+    margin: 10px 0;
+    color: #ffd700;
+}
+
+/* Back Button */
+.back-button {
+    position: fixed;
+    top: 70px;
+    left: 15px;
+    z-index: 999;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.9) 0%, rgba(218,165,32,0.9) 100%);
+    color: #000;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,215,0,0.5);
+    background: linear-gradient(135deg, rgba(255,215,0,1) 0%, rgba(218,165,32,1) 100%);
+}
+
+/* Rules Panel */
+.rules-toggle-button {
+    position: fixed;
+    top: 105px;
+    left: 15px;
+    z-index: 999;
+    padding: 5px 10px;
+    background: linear-gradient(135deg, rgba(0,123,255,0.9) 0%, rgba(0,86,179,0.9) 100%);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+}
+
+.rules-toggle-button:hover {
+    transform: translateX(3px);
+    box-shadow: 0 6px 20px rgba(0,123,255,0.5);
+    background: linear-gradient(135deg, rgba(0,123,255,1) 0%, rgba(0,86,179,1) 100%);
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 250px;
+    height: 100%;
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    color: white;
+    padding: 12px;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.7);
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+    border-right: 3px solid #ffd700;
+}
+
+.side-panel.open {
+    left: 0;
+}
+
+.side-panel h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+}
+
+.side-panel h4 {
+    color: #ffd700;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    margin-bottom: 6px;
+}
+
+.side-panel p {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    margin: 6px 0;
+}
+
+.side-panel ol, .side-panel ul {
+    margin: 6px 0;
+    padding-left: 18px;
+}
+
+.side-panel li {
+    font-size: 0.72rem;
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+
+.side-panel .close-button {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: rgba(255,0,0,0.8);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.side-panel .close-button:hover {
+    background: rgba(255,0,0,1);
+    transform: scale(1.15);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .game-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: clamp(10px, 1.5vh, 15px);
+    }
+
+    .game-info {
+        width: 100%;
+        justify-content: space-around;
+        gap: clamp(12px, 2vw, 20px);
+    }
+
+    .game-controls {
+        width: 100%;
+        justify-content: center;
+        gap: clamp(8px, 1.5vw, 12px);
+    }
+    
+    .control-button {
+        font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+        padding: clamp(6px, 0.8vh, 9px) clamp(10px, 1.8vw, 15px);
+    }
+}
+
+@media (max-width: 900px) {
+    .solitaire-container {
+        padding-top: 130px;
+    }
+    
+    .game-header {
+        padding: 8px 10px;
+    }
+    
+    .back-button {
+        top: 60px;
+        padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+    
+    .rules-toggle-button {
+        top: 92px;
+        padding: 4px 8px;
+        font-size: 0.65rem;
+    }
+    
+    .game-board {
+        gap: 15px;
+        padding: 0 8px 10px;
+    }
+    
+    .top-row {
+        gap: 12px;
+    }
+    
+    .stock-waste {
+        gap: 18px;
+    }
+    
+    .foundations {
+        gap: 8px;
+    }
+    
+    .tableau {
+        gap: 5px;
+    }
+    
+    .tableau-column {
+        min-height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .solitaire-container {
+        padding-top: 120px;
+    }
+    
+    .game-header {
+        padding: 7px 8px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .back-button {
+        top: 55px;
+        left: 10px;
+        padding: 5px 10px;
+        font-size: 0.7rem;
+    }
+    
+    .rules-toggle-button {
+        top: 85px;
+        left: 10px;
+        padding: 4px 8px;
+        font-size: 0.6rem;
+    }
+    
+    .game-board {
+        padding: 0 5px 8px;
+    }
+    
+    .top-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .tableau {
+        gap: 4px;
+    }
+    
+    .tableau-column {
+        min-height: 220px;
+    }
+
+    .control-button {
+        padding: 7px 10px;
+        font-size: 0.75rem;
+    }
+    
+    .stock-waste {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .game-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .control-button {
+        width: 100%;
+    }
+
+    .tableau {
+        gap: 3px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .solitaire-container {
+        padding-top: 110px;
+    }
+    
+    .back-button {
+        top: 50px;
+        left: 5px;
+        padding: 4px 8px;
+        font-size: 0.65rem;
+    }
+    
+    .rules-toggle-button {
+        top: 78px;
+        left: 5px;
+        padding: 3px 6px;
+        font-size: 0.55rem;
+    }
+    
+    .game-board {
+        padding: 0 3px 5px;
+    }
+    
+    .game-info {
+        gap: 10px;
+    }
+    
+    .score-display, .moves-display, .time-display {
+        min-width: 60px;
+    }
+    
+    .score-display .label, .moves-display .label, .time-display .label {
+        font-size: 0.6rem;
+    }
+    
+    .score-display .value, .moves-display .value, .time-display .value {
+        font-size: 1rem;
+    }
+    
+    .game-controls {
+        gap: 6px;
+    }
+    
+    .control-button {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+    
+    .card-pile {
+        width: clamp(60px, 12vw, 80px);
+        height: clamp(84px, 16.8vw, 112px);
+        min-height: clamp(84px, 16.8vw, 112px);
+    }
+    
+    .tableau {
+        gap: 3px;
+    }
+    
+    .tableau-column {
+        width: clamp(60px, 12vw, 80px);
+        min-height: 200px;
+    }
+    
+    .card {
+        width: clamp(60px, 12vw, 80px);
+        height: clamp(84px, 16.8vw, 112px);
+    }
+    
+    .stock-waste {
+        gap: 12px;
+    }
+    
+    .foundations {
+        gap: 5px;
+    }
+}
+
+
+/* Animación de entrada - Reparto profesional de casino */
+.game-board.initial-deal {
+    pointer-events: none;
+}
+
+/* Animación de reparto desde el mazo (como un crupier profesional) */
+.card.initial-shuffle {
+    animation: dealFromDeck var(--deal-delay, 0.5s) cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    opacity: 0;
+    transform: translate(-200px, -150px) scale(0.8) rotate(-15deg);
+}
+
+@keyframes dealFromDeck {
+    0% {
+        opacity: 0;
+        transform: translate(-200px, -150px) scale(0.8) rotate(-15deg);
+        z-index: 2000;
+    }
+    15% {
+        opacity: 1;
+        transform: translate(-150px, -100px) scale(0.85) rotate(-10deg);
+    }
+    40% {
+        transform: translate(-50px, -30px) scale(0.92) rotate(-3deg);
+    }
+    70% {
+        transform: translate(-10px, -5px) scale(0.98) rotate(-1deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        z-index: auto;
+    }
+}
+
+/* Animación para las pilas (mazo, descarte, fundaciones) */
+.card-pile.initial-shuffle {
+    animation: fadeInScale 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Animación para las columnas del tableau */
+.tableau-column.initial-shuffle {
+    animation: fadeIn 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
