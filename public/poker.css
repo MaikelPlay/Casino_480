@@ -16,14 +16,15 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: clamp(10px, 2vh, 20px);
+    padding: clamp(15px, 3vh, 25px) clamp(10px, 2vw, 20px) 70px;
     box-sizing: border-box;
     position: relative;
+    overflow: hidden;
 }
 
 .poker-table-oval {
     width: clamp(850px, 92vw, 1300px);
-    height: clamp(550px, 68vh, 750px);
+    height: clamp(520px, 65vh, 700px);
     background: transparent;
     border: none;
     border-radius: 50%;
@@ -180,8 +181,8 @@ body {
 }
 
 .player-cards .card {
-    width: clamp(45px, 6vw, 60px);
-    height: clamp(63px, 8.4vw, 84px);
+    width: clamp(55px, 7.5vw, 75px);
+    height: clamp(77px, 10.5vw, 105px);
     transition: all 0.3s ease;
     flex-shrink: 0;
 }
@@ -353,35 +354,42 @@ body {
 }
 
 .poker-actions {
-    margin-top: 15px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
-    gap: 12px;
+    gap: 8px;
     background: 
         linear-gradient(135deg, 
-            rgba(0,0,0,0.9) 0%, 
-            rgba(20,20,20,0.85) 100%);
-    padding: 18px 25px;
-    border-radius: 15px;
-    border: 2px solid rgba(255,215,0,0.3);
+            rgba(0,0,0,0.95) 0%, 
+            rgba(20,20,20,0.9) 100%);
+    padding: 10px 15px;
+    border-radius: 0;
+    border-top: 2px solid rgba(255,215,0,0.4);
     box-shadow: 
-        0 10px 30px rgba(0,0,0,0.8),
+        0 -5px 20px rgba(0,0,0,0.8),
         inset 0 1px 0 rgba(255,255,255,0.05);
     backdrop-filter: blur(10px);
+    z-index: 500;
+    justify-content: center;
+    align-items: center;
 }
 
 .poker-actions button {
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.95rem, 2vw, 1.15em);
-    padding: clamp(10px, 1.5vh, 14px) clamp(20px, 3vw, 28px);
-    border-radius: 10px;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    padding: clamp(8px, 1vh, 10px) clamp(12px, 2vw, 18px);
+    border-radius: 8px;
     border: 2px solid;
     cursor: pointer;
     font-weight: 800;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .poker-actions button::before {
@@ -436,6 +444,23 @@ body {
         0 0 30px rgba(55,178,77,0.4);
 }
 
+#allin-button {
+    background: linear-gradient(145deg, #f59f00, #d97706);
+    color: white;
+    border-color: #ffd43b;
+    box-shadow: 
+        0 6px 15px rgba(0,0,0,0.5),
+        0 0 20px rgba(245,159,0,0.3);
+}
+
+#allin-button:hover:not(:disabled) {
+    background: linear-gradient(145deg, #ffa94d, #f59f00);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 10px 25px rgba(0,0,0,0.6),
+        0 0 30px rgba(255,169,77,0.4);
+}
+
 #raise-button {
     background: linear-gradient(145deg, #1971c2, #0c4a6e);
     color: white;
@@ -456,13 +481,14 @@ body {
 .raise-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
 .raise-container input {
-    width: clamp(100px, 15vw, 130px);
-    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-    padding: clamp(6px, 1vh, 10px);
+    width: clamp(80px, 12vw, 100px);
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+    padding: clamp(6px, 0.8vh, 8px);
     text-align: center;
     background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(20,20,0,0.75) 100%);
     border: 2px solid #ffd700;
@@ -473,6 +499,34 @@ body {
     box-shadow: 
         inset 0 2px 10px rgba(0,0,0,0.5),
         0 0 15px rgba(255,215,0,0.2);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+/* Flechas elegantes para Chrome, Safari, Edge */
+.raise-container input::-webkit-inner-spin-button,
+.raise-container input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    opacity: 1;
+    width: 20px;
+    height: 100%;
+    cursor: pointer;
+    background: linear-gradient(to bottom, 
+        rgba(255,215,0,0.2) 0%, 
+        rgba(255,215,0,0.05) 50%, 
+        rgba(255,215,0,0.2) 100%);
+    border-left: 1px solid rgba(255,215,0,0.3);
+    position: relative;
+}
+
+.raise-container input::-webkit-inner-spin-button:hover,
+.raise-container input::-webkit-outer-spin-button:hover {
+    background: linear-gradient(to bottom, 
+        rgba(255,215,0,0.4) 0%, 
+        rgba(255,215,0,0.15) 50%, 
+        rgba(255,215,0,0.4) 100%);
 }
 
 .raise-container input:focus {
@@ -645,7 +699,7 @@ body {
 @media (max-width: 1024px) {
     .poker-table-oval {
         width: 95vw;
-        height: 60vh;
+        height: 62vh;
     }
 
     .player-area-poker {
@@ -655,21 +709,25 @@ body {
     }
 
     .poker-actions {
-        flex-wrap: wrap;
-        gap: 10px;
+        gap: 6px;
+        padding: 8px 12px;
     }
 
-    .raise-container {
-        width: 100%;
-        justify-content: center;
+    .poker-actions button {
+        font-size: 0.7rem;
+        padding: 7px 10px;
+    }
+
+    .raise-container input {
+        width: 70px;
+        font-size: 0.85rem;
     }
 }
 
 @media (max-width: 768px) {
     .poker-table-oval {
         width: 98vw;
-        height: 55vh;
-        border-width: 15px;
+        height: 58vh;
     }
 
     .player-area-poker {
@@ -688,20 +746,18 @@ body {
     }
 
     .poker-actions {
-        padding: 12px;
-        gap: 8px;
+        padding: 8px 10px;
+        gap: 5px;
     }
 
     .poker-actions button {
-        padding: 10px 16px;
-        font-size: 0.9rem;
+        padding: 7px 10px;
+        font-size: 0.65rem;
     }
 
-    /* Messages ocultos - no necesario */
-
     .pot {
-        font-size: 1.2rem;
-        padding: 8px 15px;
+        font-size: 1rem;
+        padding: 6px 12px;
     }
 
     .dealer-button {
@@ -709,11 +765,16 @@ body {
         height: 32px;
         font-size: 1rem;
     }
+
+    .raise-container input {
+        width: 60px;
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
     .poker-table-oval {
-        height: 50vh;
+        height: 55vh;
     }
 
     .player-area-poker {
@@ -722,8 +783,8 @@ body {
     }
 
     .player-cards .card {
-        width: 40px;
-        height: 56px;
+        width: 48px;
+        height: 67px;
     }
 
     .community-cards .card {
@@ -731,18 +792,27 @@ body {
         height: 70px;
     }
 
+    .poker-actions {
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 6px 8px;
+    }
+
     .poker-actions button {
-        width: 48%;
-        padding: 8px 12px;
-        font-size: 0.8rem;
+        flex: 1 1 45%;
+        padding: 6px 8px;
+        font-size: 0.6rem;
+        letter-spacing: 0.5px;
     }
 
     .raise-container {
         width: 100%;
+        flex: 1 1 100%;
+        justify-content: center;
     }
 
     .raise-container input {
-        width: 80px;
-        font-size: 1rem;
+        width: 70px;
+        font-size: 0.85rem;
     }
 }

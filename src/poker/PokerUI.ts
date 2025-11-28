@@ -31,6 +31,7 @@ export class PokerUI {
     private foldButton: HTMLButtonElement | null = document.getElementById('fold-button') as HTMLButtonElement;
     private checkButton: HTMLButtonElement | null = document.getElementById('check-button') as HTMLButtonElement;
     private callButton: HTMLButtonElement | null = document.getElementById('call-button') as HTMLButtonElement;
+    private allinButton: HTMLButtonElement | null = document.getElementById('allin-button') as HTMLButtonElement;
     private raiseButton: HTMLButtonElement | null = document.getElementById('raise-button') as HTMLButtonElement;
     private raiseAmountInput: HTMLInputElement | null = document.getElementById('raise-amount') as HTMLInputElement;
     private playerActionResolver: ((value: { type: string; amount?: number }) => void) | null = null;
@@ -218,6 +219,7 @@ export class PokerUI {
             this.foldButton?.addEventListener('click', this.handleFold);
             this.checkButton?.addEventListener('click', this.handleCheck);
             this.callButton?.addEventListener('click', this.handleCall);
+            this.allinButton?.addEventListener('click', this.handleAllIn);
             this.raiseButton?.addEventListener('click', this.handleRaise);
         });
     }
@@ -235,6 +237,11 @@ export class PokerUI {
     private handleCall = () => {
         this.soundEffects.playChip();
         this.resolvePlayerAction({ type: 'call' });
+    }
+
+    private handleAllIn = () => {
+        this.soundEffects.playChip();
+        this.resolvePlayerAction({ type: 'allin' });
     }
 
     private handleRaise = () => {
@@ -273,6 +280,11 @@ export class PokerUI {
             if (this.callButton) this.callButton.disabled = (playerStack === 0);
         }
 
+        // Botón All In siempre habilitado si el jugador tiene fichas
+        if (this.allinButton) {
+            this.allinButton.disabled = (playerStack === 0);
+        }
+
         if (this.raiseButton) {
             this.raiseButton.disabled = !canRaise || playerStack <= minCall;
         }
@@ -285,9 +297,7 @@ export class PokerUI {
             this.raiseAmountInput.max = playerStack.toString();
         }
 
-        if (playerStack <= minCall && this.callButton) {
-            this.callButton.textContent = `All-In (${playerStack}€)`;
-        } else if (this.callButton) {
+        if (this.callButton) {
             this.callButton.textContent = `${this.translations.callButton} (${minCall}€)`;
         }
     }
@@ -296,6 +306,7 @@ export class PokerUI {
         if (this.foldButton) this.foldButton.disabled = true;
         if (this.checkButton) this.checkButton.disabled = true;
         if (this.callButton) this.callButton.disabled = true;
+        if (this.allinButton) this.allinButton.disabled = true;
         if (this.raiseButton) this.raiseButton.disabled = true;
         if (this.raiseAmountInput) this.raiseAmountInput.disabled = true;
         if (this.callButton) this.callButton.textContent = this.translations.callButton;
@@ -305,6 +316,7 @@ export class PokerUI {
         this.foldButton?.removeEventListener('click', this.handleFold);
         this.checkButton?.removeEventListener('click', this.handleCheck);
         this.callButton?.removeEventListener('click', this.handleCall);
+        this.allinButton?.removeEventListener('click', this.handleAllIn);
         this.raiseButton?.removeEventListener('click', this.handleRaise);
     }
 
@@ -388,30 +400,30 @@ export class PokerUI {
     }
 
     private calculatePlayerPositions(numPlayers: number): Array<{ left: string; top: string }> {
-        // Posiciones optimizadas para 1-4 jugadores
+        // Posiciones optimizadas para 1-4 jugadores (más espacio central para cartas)
         switch (numPlayers) {
             case 1:
-                return [{ left: '50%', top: '85%' }]; // Solo humano abajo
+                return [{ left: '50%', top: '88%' }]; // Solo humano abajo
             case 2:
                 return [
-                    { left: '50%', top: '85%' }, // Humano abajo
-                    { left: '50%', top: '15%' }  // IA arriba
+                    { left: '50%', top: '88%' }, // Humano abajo
+                    { left: '50%', top: '12%' }  // IA arriba
                 ];
             case 3:
                 return [
-                    { left: '50%', top: '85%' },  // Humano abajo
-                    { left: '15%', top: '35%' },  // IA izquierda
-                    { left: '85%', top: '35%' }   // IA derecha
+                    { left: '50%', top: '88%' },  // Humano abajo
+                    { left: '12%', top: '30%' },  // IA izquierda
+                    { left: '88%', top: '30%' }   // IA derecha
                 ];
             case 4:
                 return [
-                    { left: '50%', top: '85%' },  // Humano abajo
-                    { left: '15%', top: '50%' },  // IA izquierda
-                    { left: '50%', top: '15%' },  // IA arriba
-                    { left: '85%', top: '50%' }   // IA derecha
+                    { left: '50%', top: '88%' },  // Humano abajo
+                    { left: '10%', top: '50%' },  // IA izquierda
+                    { left: '50%', top: '12%' },  // IA arriba
+                    { left: '90%', top: '50%' }   // IA derecha
                 ];
             default:
-                return [{ left: '50%', top: '85%' }];
+                return [{ left: '50%', top: '88%' }];
         }
     }
 
