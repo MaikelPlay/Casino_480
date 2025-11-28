@@ -13,8 +13,6 @@
     <script type="module" src="../dist/solitaire.js" defer></script>
 </head>
 <body>
-    <a href="index.html" class="back-button" title="Volver al inicio">← Inicio</a>
-    <button id="rules-toggle" class="rules-toggle-button">Reglas</button>
     <div id="rules-panel" class="side-panel">
         <h2>Solitario Klondike</h2>
         <button id="close-rules" class="close-button">✕</button>
@@ -63,6 +61,10 @@
 
     <div class="solitaire-container">
         <div class="game-header">
+            <div class="header-left">
+                <a href="index.html" class="back-button-header" title="Volver al inicio">← Inicio</a>
+                <button id="rules-toggle" class="rules-toggle-button-header">Reglas</button>
+            </div>
             <div class="game-info">
                 <div class="score-display">
                     <span class="label">Puntuación:</span>
@@ -131,6 +133,12 @@
                     <p>Tiempo: <span id="final-time"></span></p>
                 </div>
                 <button id="play-again-button" class="control-button">Jugar de Nuevo</button>
+            </div>
+        </div>
+
+        <div id="hint-message" class="hint-message hidden">
+            <div class="hint-content">
+                <p id="hint-text"></p>
             </div>
         </div>
     </div>

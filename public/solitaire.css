@@ -10,11 +10,10 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     box-sizing: border-box;
 }
@@ -24,16 +23,15 @@ body {
 }
 
 .solitaire-container {
-    width: 100%;
-    max-width: 100%;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 0;
     box-sizing: border-box;
     position: relative;
-    padding-top: 130px;
-    overflow-x: hidden !important;
+    padding-top: clamp(100px, 15vh, 130px);
+    overflow: hidden;
 }
 
 .game-header {
@@ -43,9 +41,9 @@ body {
     right: 0;
     z-index: 1000;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: clamp(20px, 4vw, 60px);
+    gap: clamp(10px, 2vw, 20px);
     background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,20,0.9) 100%);
     padding: clamp(10px, 1.2vh, 15px) clamp(12px, 1.5vw, 20px);
     border-bottom: 2px solid rgba(255,215,0,0.4);
@@ -53,6 +51,59 @@ body {
     backdrop-filter: blur(15px);
     width: 100%;
     box-sizing: border-box;
+}
+
+.header-left {
+    display: flex;
+    gap: clamp(8px, 1.5vw, 12px);
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.back-button-header {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+    padding: clamp(6px, 0.8vh, 8px) clamp(10px, 1.8vw, 14px);
+    border-radius: 8px;
+    border: 2px solid rgba(255,215,0,0.5);
+    cursor: pointer;
+    font-weight: 600;
+    background: rgba(0,0,0,0.6);
+    color: #ffd700;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.back-button-header:hover {
+    background: rgba(255,215,0,0.2);
+    border-color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+}
+
+.rules-toggle-button-header {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    padding: clamp(7px, 1vh, 10px) clamp(12px, 2vw, 18px);
+    border-radius: 10px;
+    border: 2px solid #ffd700;
+    cursor: pointer;
+    font-weight: 700;
+    background: linear-gradient(145deg, #1971c2, #0c4a6e);
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.rules-toggle-button-header:hover {
+    background: linear-gradient(145deg, #1c7ed6, #1971c2);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
 }
 
 .game-info {
@@ -261,7 +312,7 @@ body {
 
 .tableau-column {
     width: clamp(80px, 10vw, 110px);
-    min-height: 280px;
+    min-height: clamp(280px, 40vh, 350px);
     position: relative;
     border-radius: 10px;
 }
@@ -295,21 +346,7 @@ body {
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.card.flipping {
-    animation: flipCard 0.6s ease-in-out;
-}
-
-@keyframes flipCard {
-    0% {
-        transform: rotateY(0deg);
-    }
-    50% {
-        transform: rotateY(90deg);
-    }
-    100% {
-        transform: rotateY(0deg);
-    }
-}
+/* Animación de volteo eliminada */
 
 .card img {
     width: 100%;
@@ -485,6 +522,51 @@ body {
     font-weight: 700;
     margin: 10px 0;
     color: #ffd700;
+}
+
+/* Hint Message */
+.hint-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    animation: hintAppear 0.3s ease-out;
+}
+
+.hint-message.hidden {
+    display: none;
+}
+
+.hint-content {
+    background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,20,0.9) 100%);
+    padding: clamp(20px, 3vh, 30px) clamp(30px, 5vw, 50px);
+    border-radius: 15px;
+    border: 3px solid #ffd700;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,0.4);
+    text-align: center;
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.hint-content p {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1rem, 2.2vw, 1.3rem);
+    color: #ffd700;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(255,215,0,0.5);
+    font-weight: 600;
+}
+
+@keyframes hintAppear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 /* Back Button */
@@ -684,7 +766,7 @@ body {
     }
     
     .tableau-column {
-        min-height: 250px;
+        min-height: 300px;
     }
 }
 
@@ -728,7 +810,7 @@ body {
     }
     
     .tableau-column {
-        min-height: 220px;
+        min-height: 280px;
     }
 
     .control-button {
@@ -822,7 +904,7 @@ body {
     
     .tableau-column {
         width: clamp(60px, 12vw, 80px);
-        min-height: 200px;
+        min-height: 250px;
     }
     
     .card {
