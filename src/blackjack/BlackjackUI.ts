@@ -1,5 +1,6 @@
 import { Carta } from '../common/Card.js';
 import type { BlackjackEstadoJuego } from './types.js';
+import { SoundEffects } from '../common/SoundEffects.js';
 
 /**
  * Manages the User Interface for the Blackjack game.
@@ -7,6 +8,7 @@ import type { BlackjackEstadoJuego } from './types.js';
  * and controlling button visibility based on game state.
  */
 export class BlackjackUI {
+    private soundEffects = new SoundEffects();
     private crupierCartasDiv = document.getElementById('dealer-cards')!;
     private crupierPuntuacionSpan = document.getElementById('dealer-score')!;
     private playersContainer = document.getElementById('players-container')!;
@@ -128,6 +130,13 @@ export class BlackjackUI {
         
         if (oculta) cartaImg.classList.add('hidden');
         contenedor.appendChild(cartaImg);
+        
+        // Reproducir sonido de carta
+        if (oculta) {
+            this.soundEffects.playCardDeal();
+        } else {
+            this.soundEffects.playCardFlip();
+        }
     }
 
     /**
@@ -258,12 +267,15 @@ export class BlackjackUI {
         if (resultado === 'win') {
             mensaje = `+${cantidad}€`;
             simbolo = '✓';
+            this.soundEffects.playWin();
         } else if (resultado === 'lose') {
             mensaje = `-${cantidad}€`;
             simbolo = '✗';
+            this.soundEffects.playLose();
         } else {
             mensaje = 'EMPATE';
             simbolo = '=';
+            this.soundEffects.playPush();
         }
 
         notification.innerHTML = `<span class="result-symbol">${simbolo}</span> ${mensaje}`;
@@ -298,12 +310,31 @@ export class BlackjackUI {
      * @param handlers An object mapping button names to their event handler functions.
      */
     public configurarBotones(handlers: { [key: string]: () => void }): void {
-        this.nuevaRondaButton.addEventListener('click', handlers.nuevaRonda);
-        this.pedirCartaButton.addEventListener('click', handlers.pedirCarta);
-        this.plantarseButton.addEventListener('click', handlers.plantarse);
-        this.aumentarApuestaButton.addEventListener('click', handlers.aumentarApuesta);
-        this.disminuirApuestaButton.addEventListener('click', handlers.disminuirApuesta);
-        this.apostarButton.addEventListener('click', handlers.apostar);
+        this.nuevaRondaButton.addEventListener('click', () => {
+            this.soundEffects.playClick();
+            handlers.nuevaRonda();
+        });
+        this.pedirCartaButton.addEventListener('click', () => {
+            this.soundEffects.playClick();
+            handlers.pedirCarta();
+        });
+        this.plantarseButton.addEventListener('click', () => {
+            this.soundEffects.playClick();
+            handlers.plantarse();
+        });
+        this.aumentarApuestaButton.addEventListener('click', () => {
+            this.soundEffects.playChip();
+            handlers.aumentarApuesta();
+        });
+        this.disminuirApuestaButton.addEventListener('click', () => {
+            this.soundEffects.playChip();
+            handlers.disminuirApuesta();
+        });
+        this.apostarButton.addEventListener('click', () => {
+            this.soundEffects.playChip();
+            this.soundEffects.playShuffle();
+            handlers.apostar();
+        });
     }
 
     /**

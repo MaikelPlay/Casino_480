@@ -1,7 +1,9 @@
 import { Carta } from '../common/Card.js';
 import { PokerPlayer } from './PokerPlayer.js';
+import { SoundEffects } from '../common/SoundEffects.js';
 
 export class PokerUI {
+    private soundEffects = new SoundEffects();
     private playersContainer: HTMLElement | null = document.getElementById('players-container');
     private communityCardsContainer: HTMLElement | null = document.getElementById('community-cards');
     private potDiv: HTMLElement | null = document.getElementById('pot');
@@ -84,6 +86,10 @@ export class PokerUI {
                     `<div class="card dealt"><img src="${c.getImagen()}" alt="${c.toString()}"></div>`
                 ).join('');
                 this.communityCardsContainer.innerHTML = communityHTML;
+                // Reproducir sonido de carta revelada
+                if (community.length > 0) {
+                    this.soundEffects.playCardFlip();
+                }
             }
         }
         
@@ -217,20 +223,24 @@ export class PokerUI {
     }
 
     private handleFold = () => {
+        this.soundEffects.playClick();
         this.resolvePlayerAction({ type: 'fold' });
     }
 
     private handleCheck = () => {
+        this.soundEffects.playClick();
         this.resolvePlayerAction({ type: 'check' });
     }
 
     private handleCall = () => {
+        this.soundEffects.playChip();
         this.resolvePlayerAction({ type: 'call' });
     }
 
     private handleRaise = () => {
         const amount = this.raiseAmountInput ? parseInt(this.raiseAmountInput.value, 10) : undefined;
         if (amount && amount > 0) {
+            this.soundEffects.playChip();
             this.resolvePlayerAction({ type: 'raise', amount });
         } else {
             this.log('Cantidad de subida inválida.');
@@ -433,6 +443,9 @@ export class PokerUI {
         document.querySelectorAll('.player-area-poker').forEach(el => {
             el.classList.remove('active-turn');
         });
+        
+        // Sonido de barajar al limpiar el tablero
+        this.soundEffects.playShuffle();
     }
 
     revealAllHoleCards(players: PokerPlayer[]): void {
@@ -447,5 +460,7 @@ export class PokerUI {
                 cardsDiv.innerHTML = handHTML;
             }
         });
+        // Sonido de revelar cartas
+        this.soundEffects.playCardFlip();
     }
 }
