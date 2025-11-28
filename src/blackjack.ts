@@ -1,6 +1,7 @@
 import { BlackjackGame } from './blackjack/BlackjackGame.js';
 import { BlackjackUI } from './blackjack/BlackjackUI.js';
 import { initBackButton } from './backButton.js';
+import { initRulesPanel } from './rulesPanel.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -12,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize back button translation
     initBackButton();
+    
+    // Initialize rules panel
+    initRulesPanel();
 
     // Instanciar las clases de UI y Juego
     const blackjackUI = new BlackjackUI();

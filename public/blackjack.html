@@ -12,6 +12,47 @@
 </head>
 <body>
     <a href="index.html" class="back-button" title="Volver al inicio">← Inicio</a>
+    <button id="rules-toggle" class="rules-toggle-button">Reglas</button>
+    <div id="rules-panel" class="side-panel">
+        <h2>Blackjack</h2>
+        <button id="close-rules" class="close-button">✕</button>
+        
+        <h4>Objetivo</h4>
+        <p>Conseguir una mano con un valor lo más cercano posible a 21 sin pasarse, y superar la mano del crupier.</p>
+        
+        <h4>Valores de las Cartas</h4>
+        <ul>
+            <li><strong>Números (2-10):</strong> Valor nominal</li>
+            <li><strong>Figuras (J, Q, K):</strong> Valen 10 puntos</li>
+            <li><strong>As:</strong> Vale 1 u 11 puntos (el que más convenga)</li>
+        </ul>
+        
+        <h4>Cómo se Juega</h4>
+        <ol>
+            <li><strong>Apuesta:</strong> Coloca tu apuesta inicial</li>
+            <li><strong>Reparto:</strong> Recibes 2 cartas boca arriba. El crupier recibe 1 carta boca arriba y 1 boca abajo</li>
+            <li><strong>Tu turno:</strong> Decide si pedir carta o plantarte</li>
+            <li><strong>Turno del crupier:</strong> El crupier juega según las reglas (pide hasta 17 o más)</li>
+            <li><strong>Resultado:</strong> Gana quien tenga la mano más cercana a 21 sin pasarse</li>
+        </ol>
+        
+        <h4>Acciones</h4>
+        <ul>
+            <li><strong>Pedir Carta (Hit):</strong> Recibir otra carta</li>
+            <li><strong>Plantarse (Stand):</strong> No recibir más cartas</li>
+        </ul>
+        
+        <h4>Resultados</h4>
+        <ul>
+            <li><strong>Blackjack:</strong> As + carta de 10 puntos (paga 3:2)</li>
+            <li><strong>Ganar:</strong> Superar al crupier sin pasarse de 21 (paga 1:1)</li>
+            <li><strong>Empate:</strong> Misma puntuación que el crupier (recuperas tu apuesta)</li>
+            <li><strong>Perder:</strong> Pasarse de 21 o tener menos que el crupier</li>
+        </ul>
+        
+        <h4>Regla del Crupier</h4>
+        <p>El crupier debe pedir carta con 16 o menos, y plantarse con 17 o más.</p>
+    </div>
     <div id="game-container" class="game-container">
         <h1>Blackjack</h1>
 

@@ -1,6 +1,7 @@
 import { PokerGame } from './poker/PokerGame.js';
 import { PokerUI } from './poker/PokerUI.js';
 import { initBackButton } from './backButton.js';
+import { initRulesPanel } from './rulesPanel.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inicialización del juego desde los parámetros de la URL
@@ -12,21 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize back button translation
     initBackButton();
-
-    // Lógica del Panel de Reglas
-    const rulesToggleButton = document.getElementById('rules-toggle');
-    const rulesPanel = document.getElementById('rules-panel');
-    const closeRulesButton = document.getElementById('close-rules');
-
-    if (rulesToggleButton && rulesPanel && closeRulesButton) {
-        rulesToggleButton.addEventListener('click', () => {
-            rulesPanel.classList.add('open');
-        });
-
-        closeRulesButton.addEventListener('click', () => {
-            rulesPanel.classList.remove('open');
-        });
-    }
+    
+    // Initialize rules panel
+    initRulesPanel();
 
     const pokerUI = new PokerUI();
     const game = new PokerGame(pokerUI, saldoInicial, lang, nombreJugador, numeroJugadores);
