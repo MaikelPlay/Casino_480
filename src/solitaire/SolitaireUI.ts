@@ -4,29 +4,11 @@ import { SolitaireGame } from './SolitaireGame.js';
 
 export class SolitaireUI {
     private game: SolitaireGame | null = null;
-    private draggedCard: HTMLElement | null = null;
     private draggedCards: HTMLElement[] = [];
     private dragSource: { location: string; pile: number; index: number } | null = null;
-    private sounds: { [key: string]: HTMLAudioElement } = {};
 
     constructor() {
         this.setupEventListeners();
-        this.initializeSounds();
-    }
-
-    private initializeSounds(): void {
-        // Crear sonidos usando Web Audio API con frecuencias específicas
-        // Sonidos discretos y elegantes para un casino
-        this.createSound('cardDraw', 800, 0.1, 0.05);
-        this.createSound('cardPlace', 600, 0.15, 0.08);
-        this.createSound('cardToFoundation', 1000, 0.2, 0.1);
-        this.createSound('cardFlip', 700, 0.12, 0.06);
-        this.createSound('success', 1200, 0.25, 0.15);
-    }
-
-    private createSound(name: string, frequency: number, volume: number, duration: number): void {
-        // Los sonidos se generarán dinámicamente con Web Audio API
-        // Esto evita necesitar archivos de audio externos
     }
 
     private playSound(soundName: string): void {
@@ -70,10 +52,7 @@ export class SolitaireUI {
         // Stock click
         const stock = document.getElementById('stock');
         stock?.addEventListener('click', () => {
-            // Agregar animación al mazo
-            stock.classList.add('drawing');
             this.playSound('cardDraw');
-            setTimeout(() => stock.classList.remove('drawing'), 300);
             this.game?.drawFromStock();
         });
 
@@ -144,22 +123,25 @@ export class SolitaireUI {
             const topCard = waste[waste.length - 1];
             const cardEl = this.createCardElement(topCard, true);
             cardEl.classList.add('draggable');
-            cardEl.classList.add('dealing'); // Animación al aparecer
             this.setupDragEvents(cardEl, 'waste', 0, waste.length - 1, [topCard]);
             
-            // Double click para mover a fundación
-            cardEl.addEventListener('dblclick', () => {
-                // Animación al mover a fundación
-                cardEl.classList.add('moving-to-foundation');
-                setTimeout(() => {
-                    this.game?.moveToFoundation(topCard, 'waste', 0, waste.length - 1);
-                }, 200);
+            // Double click para mover a fundación automáticamente
+            cardEl.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+                console.log(`Double-click on ${topCard.toString()} from waste`);
+                
+                // Intentar mover a fundación
+                const moved = this.game?.moveToFoundation(topCard, 'waste', 0, waste.length - 1);
+                
+                if (moved) {
+                    cardEl.classList.add('moving-to-foundation');
+                    this.playSound('cardToFoundation');
+                } else {
+                    console.log('Could not move card to foundation');
+                }
             });
             
             wasteEl.appendChild(cardEl);
-            
-            // Remover clase de animación después
-            setTimeout(() => cardEl.classList.remove('dealing'), 400);
         } else {
             const emptyEl = document.createElement('div');
             emptyEl.className = 'empty-pile';
@@ -221,8 +203,8 @@ export class SolitaireUI {
 
             column.forEach((cardData, cardIndex) => {
                 const cardEl = this.createCardElement(cardData.card, cardData.faceUp);
-                // Espaciado de 35px para ver mejor el número y palo de cada carta
-                cardEl.style.top = `${cardIndex * 35}px`;
+                // Espaciado de 40px para ver mejor las cartas escalonadas sin scroll
+                cardEl.style.top = `${cardIndex * 40}px`;
                 cardEl.style.zIndex = `${cardIndex}`;
                 
                 if (cardData.faceUp) {
@@ -230,23 +212,26 @@ export class SolitaireUI {
                     const cardsToMove = column.slice(cardIndex).map(c => c.card);
                     this.setupDragEvents(cardEl, 'tableau', colIndex, cardIndex, cardsToMove);
                     
-                    // Double click para mover a fundación
-                    cardEl.addEventListener('dblclick', () => {
-                        // Animación al mover a fundación
-                        cardEl.classList.add('moving-to-foundation');
-                        setTimeout(() => {
-                            this.game?.moveToFoundation(cardData.card, 'tableau', colIndex, cardIndex);
-                        }, 200);
-                    });
-                    
-                    // Animación de entrada si es la última carta (recién volteada)
-                    if (cardIndex === column.length - 1 && column.length > 1) {
-                        const prevCard = column[cardIndex - 1];
-                        if (!prevCard.faceUp) {
-                            cardEl.classList.add('flipping');
-                            setTimeout(() => cardEl.classList.remove('flipping'), 600);
+                    // Double click para mover a fundación (cualquier carta boca arriba)
+                    cardEl.addEventListener('dblclick', (e) => {
+                        e.preventDefault();
+                        console.log(`Double-click on ${cardData.card.toString()} from tableau ${colIndex} at index ${cardIndex}`);
+                        
+                        // Solo se puede mover a fundación si es la última carta de la secuencia
+                        if (cardIndex === column.length - 1) {
+                            // Intentar mover a fundación
+                            const moved = this.game?.moveToFoundation(cardData.card, 'tableau', colIndex, cardIndex);
+                            
+                            if (moved) {
+                                cardEl.classList.add('moving-to-foundation');
+                                this.playSound('cardToFoundation');
+                            } else {
+                                console.log('Could not move card to foundation');
+                            }
+                        } else {
+                            console.log('Can only move top card to foundation');
                         }
-                    }
+                    });
                 } else {
                     // Las cartas boca abajo no son arrastrables
                     cardEl.style.cursor = 'default';
@@ -286,7 +271,6 @@ export class SolitaireUI {
 
         cardEl.addEventListener('dragstart', (e) => {
             cardEl.style.cursor = 'grabbing';
-            this.draggedCard = cardEl;
             this.dragSource = { location, pile, index };
             
             // Si es del tableau, arrastrar todas las cartas desde este índice
@@ -322,7 +306,6 @@ export class SolitaireUI {
                 c.classList.remove('animating');
             });
             this.draggedCards = [];
-            this.draggedCard = null;
             this.dragSource = null;
         });
     }
@@ -353,6 +336,7 @@ export class SolitaireUI {
             if (location === 'foundation') {
                 // Solo se puede mover una carta a la vez a la fundación
                 if (cards.length === 1) {
+                    console.log(`Attempting to drop ${cards[0].toString()} on foundation ${pile}`);
                     const success = this.game.moveToFoundation(
                         cards[0],
                         this.dragSource.location,
@@ -362,7 +346,12 @@ export class SolitaireUI {
                     
                     if (success) {
                         this.playSound('cardToFoundation');
+                        console.log('Successfully moved to foundation');
+                    } else {
+                        console.log('Failed to move to foundation');
                     }
+                } else {
+                    console.log('Cannot move multiple cards to foundation');
                 }
             } else if (location === 'tableau') {
                 const success = this.game.moveToTableau(
@@ -385,7 +374,7 @@ export class SolitaireUI {
 
         const hint = this.game.getHint();
         if (!hint) {
-            alert('No hay movimientos disponibles. Intenta robar del mazo.');
+            this.showHintMessage('No hay movimientos disponibles. Intenta robar del mazo.');
             return;
         }
 
@@ -399,6 +388,21 @@ export class SolitaireUI {
                     cardEl.classList.remove('hint-highlight');
                 }, 3000);
             }
+        }
+    }
+
+    private showHintMessage(message: string): void {
+        const hintMessage = document.getElementById('hint-message');
+        const hintText = document.getElementById('hint-text');
+        
+        if (hintMessage && hintText) {
+            hintText.textContent = message;
+            hintMessage.classList.remove('hidden');
+            
+            // Ocultar el mensaje después de 2.5 segundos
+            setTimeout(() => {
+                hintMessage.classList.add('hidden');
+            }, 2500);
         }
     }
 

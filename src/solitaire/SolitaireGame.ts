@@ -104,42 +104,62 @@ export class SolitaireGame {
     public canMoveToFoundation(card: Carta, foundationIndex: number): boolean {
         const foundation = this.foundations[foundationIndex];
         
+        // Si la fundación está vacía, solo se puede colocar un As
         if (foundation.length === 0) {
             return card.rango === 'as';
         }
 
+        // Si la fundación tiene cartas, verificar palo y secuencia
         const topCard = foundation[foundation.length - 1];
+        
+        // Debe ser del mismo palo
         if (topCard.palo !== card.palo) {
             return false;
         }
 
+        // Verificar que sea la siguiente carta en secuencia ascendente
         const rankOrder = ['as', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
         const topRankIndex = rankOrder.indexOf(topCard.rango);
         const cardRankIndex = rankOrder.indexOf(card.rango);
 
+        // La carta debe ser exactamente la siguiente en la secuencia
         return cardRankIndex === topRankIndex + 1;
     }
+    
+    private findFoundationForCard(card: Carta): number {
+        // Encontrar la fundación correcta basada en el palo
+        const suitMap: { [key: string]: number } = {
+            'corazones': 0,
+            'rombo': 1,
+            'picas': 2,
+            'trebol': 3
+        };
+        return suitMap[card.palo];
+    }
 
-    public canMoveToTableau(card: Carta, columnIndex: number, cards: Carta[] = [card]): boolean {
+    public canMoveToTableau(card: Carta, columnIndex: number): boolean {
         const column = this.tableau[columnIndex];
         
+        // Si la columna está vacía, solo se puede colocar un Rey
         if (column.length === 0) {
             return card.rango === 'k';
         }
 
         const topCard = column[column.length - 1];
+        
+        // No se puede colocar sobre una carta boca abajo
         if (!topCard.faceUp) {
             return false;
         }
 
-        // Verificar colores alternados
+        // Verificar colores alternados (rojo sobre negro, negro sobre rojo)
         const cardColor = this.getCardColor(card.palo);
         const topColor = this.getCardColor(topCard.card.palo);
         if (cardColor === topColor) {
             return false;
         }
 
-        // Verificar orden descendente
+        // Verificar orden descendente (la carta debe ser una menos que la superior)
         const rankOrder = ['as', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
         const topRankIndex = rankOrder.indexOf(topCard.card.rango);
         const cardRankIndex = rankOrder.indexOf(card.rango);
@@ -152,33 +172,74 @@ export class SolitaireGame {
     }
 
     public moveToFoundation(card: Carta, fromLocation: string, fromPile: number, fromIndex: number): boolean {
+        console.log(`=== moveToFoundation called ===`);
+        console.log(`Card: ${card.toString()}, From: ${fromLocation}, Pile: ${fromPile}, Index: ${fromIndex}`);
+        
         // Encontrar la fundación correcta por palo
-        const suitMap: { [key: string]: number } = {
-            'corazones': 0,
-            'rombo': 1,
-            'picas': 2,
-            'trebol': 3
-        };
-        const foundationIndex = suitMap[card.palo];
+        const foundationIndex = this.findFoundationForCard(card);
+        console.log(`Target foundation: ${foundationIndex}`);
+        console.log(`Foundation state: ${this.foundations[foundationIndex].length} cards`);
 
+        // Verificar que el movimiento sea válido
         if (!this.canMoveToFoundation(card, foundationIndex)) {
+            console.log(`❌ Cannot move ${card.toString()} to foundation ${foundationIndex}`);
             return false;
         }
+        console.log(`✓ Move is valid`);
 
-        // Verificar que sea la última carta si viene del tableau
+        // Obtener la carta real de la ubicación de origen
+        let cardToMove: Carta | null = null;
+
         if (fromLocation === 'tableau') {
             const column = this.tableau[fromPile];
             if (fromIndex !== column.length - 1) {
-                // Solo se puede mover la carta superior a la fundación
+                console.log('❌ Can only move top card from tableau to foundation');
                 return false;
             }
+            
+            if (!column[fromIndex].faceUp) {
+                console.log('❌ Cannot move face-down card to foundation');
+                return false;
+            }
+            
+            cardToMove = column[fromIndex].card;
+        } else if (fromLocation === 'waste') {
+            if (this.waste.length === 0) {
+                console.log('❌ Waste is empty');
+                return false;
+            }
+            cardToMove = this.waste[this.waste.length - 1];
+        } else if (fromLocation === 'foundation') {
+            if (this.foundations[fromPile].length === 0) {
+                console.log('❌ Foundation is empty');
+                return false;
+            }
+            cardToMove = this.foundations[fromPile][this.foundations[fromPile].length - 1];
         }
 
+        if (!cardToMove) {
+            console.log('❌ Could not find card to move');
+            return false;
+        }
+
+        console.log(`✓ Card to move: ${cardToMove.toString()}`);
+
         // Remover carta de su ubicación original
-        this.removeCardFrom(fromLocation, fromPile, fromIndex);
+        if (fromLocation === 'waste') {
+            this.waste.pop();
+            console.log(`✓ Removed from waste`);
+        } else if (fromLocation === 'tableau') {
+            this.tableau[fromPile].splice(fromIndex, 1);
+            console.log(`✓ Removed from tableau ${fromPile}`);
+        } else if (fromLocation === 'foundation') {
+            this.foundations[fromPile].pop();
+            this.score -= 15;
+            console.log(`✓ Removed from foundation ${fromPile}`);
+        }
 
         // Agregar a fundación
-        this.foundations[foundationIndex].push(card);
+        this.foundations[foundationIndex].push(cardToMove);
+        console.log(`✓ Added to foundation ${foundationIndex}. Foundation now has ${this.foundations[foundationIndex].length} cards`);
 
         // Actualizar puntuación
         this.score += 10;
@@ -188,11 +249,12 @@ export class SolitaireGame {
         const wasFlipped = this.flipTopCardIfNeeded(fromLocation, fromPile);
         if (wasFlipped) {
             this.score += 5;
+            console.log(`✓ Flipped card in ${fromLocation} ${fromPile}`);
         }
 
         // Guardar movimiento
         const move: Move = {
-            card,
+            card: cardToMove,
             from: { location: fromLocation, pile: fromPile, index: fromIndex },
             to: { location: 'foundation', pile: foundationIndex, index: this.foundations[foundationIndex].length - 1 },
             wasFlipped,
@@ -200,15 +262,26 @@ export class SolitaireGame {
         };
         this.moveHistory.push(move);
 
+        console.log(`✓ Move completed successfully`);
         this.ui.render(this.getGameState());
         this.checkWin();
         return true;
     }
 
     public moveToTableau(cards: Carta[], fromLocation: string, fromPile: number, fromIndex: number, toColumn: number): boolean {
+        if (cards.length === 0) {
+            return false;
+        }
+
         const firstCard = cards[0];
         
-        if (!this.canMoveToTableau(firstCard, toColumn, cards)) {
+        // Verificar si el movimiento es válido
+        if (!this.canMoveToTableau(firstCard, toColumn)) {
+            return false;
+        }
+
+        // No se puede mover a la misma columna
+        if (fromLocation === 'tableau' && fromPile === toColumn) {
             return false;
         }
 
@@ -216,6 +289,14 @@ export class SolitaireGame {
 
         // Remover cartas de su ubicación original
         if (fromLocation === 'tableau') {
+            // Verificar que todas las cartas a mover estén boca arriba
+            const sourceColumn = this.tableau[fromPile];
+            for (let i = fromIndex; i < sourceColumn.length; i++) {
+                if (!sourceColumn[i].faceUp) {
+                    return false; // No se pueden mover cartas boca abajo
+                }
+            }
+            
             // Extraer las cartas desde el índice especificado
             cardsToMove = this.tableau[fromPile].splice(fromIndex);
         } else if (fromLocation === 'waste') {
@@ -229,8 +310,12 @@ export class SolitaireGame {
             const card = this.foundations[fromPile].pop();
             if (card) {
                 cardsToMove = [{ card, faceUp: true }];
-                this.score -= 15; // Penalización
+                this.score -= 15; // Penalización por mover de fundación
             }
+        }
+
+        if (cardsToMove.length === 0) {
+            return false;
         }
 
         // Agregar a tableau destino
@@ -261,17 +346,7 @@ export class SolitaireGame {
         return true;
     }
 
-    private removeCardFrom(location: string, pile: number, index: number): void {
-        if (location === 'waste') {
-            this.waste.pop();
-        } else if (location === 'tableau') {
-            // Eliminar solo la carta en el índice especificado (debe ser la última)
-            this.tableau[pile].splice(index, 1);
-        } else if (location === 'foundation') {
-            this.foundations[pile].pop();
-            this.score -= 15; // Penalización por mover de fundación
-        }
-    }
+
 
     private flipTopCardIfNeeded(location: string, pile: number): boolean {
         if (location === 'tableau' && this.tableau[pile].length > 0) {
@@ -303,18 +378,19 @@ export class SolitaireGame {
         if (lastMove.from.location === 'waste') {
             this.waste.push(lastMove.card);
         } else if (lastMove.from.location === 'tableau') {
+            // Voltear la carta superior si fue volteada durante el movimiento
+            if (lastMove.wasFlipped && this.tableau[lastMove.from.pile].length > 0) {
+                const topCard = this.tableau[lastMove.from.pile][this.tableau[lastMove.from.pile].length - 1];
+                topCard.faceUp = false;
+            }
+            
+            // Restaurar las cartas movidas
             if (lastMove.cards) {
                 for (const card of lastMove.cards) {
                     this.tableau[lastMove.from.pile].push({ card, faceUp: true });
                 }
             } else {
                 this.tableau[lastMove.from.pile].push({ card: lastMove.card, faceUp: true });
-            }
-            
-            // Voltear carta si fue volteada
-            if (lastMove.wasFlipped && this.tableau[lastMove.from.pile].length > 0) {
-                const topCard = this.tableau[lastMove.from.pile][this.tableau[lastMove.from.pile].length - 1];
-                topCard.faceUp = false;
             }
         } else if (lastMove.from.location === 'foundation') {
             this.foundations[lastMove.from.pile].push(lastMove.card);
