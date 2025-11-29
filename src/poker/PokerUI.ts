@@ -481,7 +481,7 @@ export class PokerUI {
         this.log(this.translations.showdownMessage);
     }
 
-    showWinnerModal(winnerName: string, handDescription: string, amount: number): void {
+    showWinnerModal(winnerName: string, handDescription: string, amount: number, onContinue?: () => void): void {
         const modal = document.getElementById('winner-modal');
         const winnerNameEl = document.getElementById('winner-name');
         const winnerHandEl = document.getElementById('winner-hand');
@@ -495,13 +495,20 @@ export class PokerUI {
             
             modal.classList.remove('hidden');
 
+            // Limpiar listeners anteriores clonando el botón
+            const newContinueBtn = continueBtn.cloneNode(true) as HTMLButtonElement;
+            continueBtn.parentNode?.replaceChild(newContinueBtn, continueBtn);
+
             // Configurar el botón de continuar
-            const handleContinue = () => {
+            newContinueBtn.addEventListener('click', () => {
                 modal.classList.add('hidden');
-                continueBtn.removeEventListener('click', handleContinue);
-            };
-            
-            continueBtn.addEventListener('click', handleContinue);
+                this.soundEffects.playClick();
+                
+                // Llamar al callback si existe
+                if (onContinue) {
+                    onContinue();
+                }
+            });
         }
     }
 

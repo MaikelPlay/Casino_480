@@ -399,7 +399,10 @@ export class PokerGame {
             
             // Mostrar modal de victoria
             setTimeout(() => {
-                this.ui.showWinnerModal(winner.name, 'Victoria por abandono', totalWinnings);
+                this.ui.showWinnerModal(winner.name, 'Victoria por abandono', totalWinnings, () => {
+                    // Continuar con la siguiente mano cuando el usuario haga clic
+                    setTimeout(() => this.startHand(), 1000);
+                });
             }, 1500);
         } else {
             // Evaluar manos de todos los jugadores activos
@@ -448,14 +451,15 @@ export class PokerGame {
                 const displayName = winners.length > 1 
                     ? winners.map(w => w.name).join(' y ')
                     : winners[0].name;
-                this.ui.showWinnerModal(displayName, bestEval.description, winAmount);
+                this.ui.showWinnerModal(displayName, bestEval.description, winAmount, () => {
+                    // Continuar con la siguiente mano cuando el usuario haga clic
+                    setTimeout(() => this.startHand(), 1000);
+                });
             }, 1500);
         }
         
         this.pots = [];
         this.dealerIndex = (this.dealerIndex + 1) % this.players.length;
-
-        setTimeout(() => this.startHand(), 5000);
     }
 
     private sleep(ms: number): Promise<void> {
