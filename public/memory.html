@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory - Juego de Cartas</title>
+    <link rel="icon" type="image/png" href="assets/Baraja/rombo_q.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="memory.css">
+    <script type="module" src="../dist/memory.js" defer></script>
+</head>
+<body>
+    <div class="memory-container">
+        <div class="game-header">
+            <a href="index.html" class="back-button-header" title="Volver al inicio">← Inicio</a>
+            <div class="game-info">
+                <div class="stat-display">
+                    <span class="label">Movimientos:</span>
+                    <span id="moves" class="value">0</span>
+                </div>
+                <div class="stat-display">
+                    <span class="label">Parejas:</span>
+                    <span id="pairs" class="value">0/0</span>
+                </div>
+                <div class="stat-display">
+                    <span class="label">Tiempo:</span>
+                    <span id="time" class="value">0:00</span>
+                </div>
+            </div>
+            <button id="new-game-button" class="control-button">Nuevo Juego</button>
+        </div>
+
+        <div id="difficulty-selector" class="difficulty-selector">
+            <h2>Selecciona la Dificultad</h2>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn" data-difficulty="1">
+                    <span class="stars">⭐</span>
+                    <span class="label">Fácil</span>
+                    <span class="info">6 parejas</span>
+                </button>
+                <button class="difficulty-btn" data-difficulty="2">
+                    <span class="stars">⭐⭐</span>
+                    <span class="label">Medio</span>
+                    <span class="info">10 parejas</span>
+                </button>
+                <button class="difficulty-btn" data-difficulty="3">
+                    <span class="stars">⭐⭐⭐</span>
+                    <span class="label">Difícil</span>
+                    <span class="info">12 parejas</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="game-board" class="game-board hidden"></div>
+
+        <div id="win-message" class="win-message hidden">
+            <div class="win-content">
+                <h2>¡Felicidades!</h2>
+                <p>Has completado el Memory</p>
+                <div class="win-stats">
+                    <p>Movimientos: <span id="final-moves"></span></p>
+                    <p>Tiempo: <span id="final-time"></span></p>
+                </div>
+                <button id="play-again-button" class="control-button">Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

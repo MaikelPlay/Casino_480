@@ -79,8 +79,8 @@ export class SolitaireUI {
             stockEl.appendChild(cardEl);
         } else {
             const emptyEl = document.createElement('div');
-            emptyEl.className = 'empty-pile';
-            emptyEl.textContent = '↻';
+            emptyEl.className = 'empty-pile empty-pile-text';
+            emptyEl.textContent = 'Mazo';
             stockEl.appendChild(emptyEl);
         }
     }
@@ -116,7 +116,7 @@ export class SolitaireUI {
             wasteEl.appendChild(cardEl);
         } else {
             const emptyEl = document.createElement('div');
-            emptyEl.className = 'empty-pile';
+            emptyEl.className = 'empty-pile empty-pile-text';
             emptyEl.textContent = 'Descarte';
             wasteEl.appendChild(emptyEl);
         }
@@ -150,7 +150,7 @@ export class SolitaireUI {
                 foundationEl.appendChild(cardEl);
             } else {
                 const emptyEl = document.createElement('div');
-                emptyEl.className = 'empty-pile';
+                emptyEl.className = 'empty-pile empty-pile-symbol';
                 const suits = ['♥', '♦', '♠', '♣'];
                 emptyEl.textContent = suits[index];
                 foundationEl.appendChild(emptyEl);

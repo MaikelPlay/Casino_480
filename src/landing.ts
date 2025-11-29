@@ -1,10 +1,11 @@
 
-type JuegoSeleccionado = 'BlackJack' | 'Poker' | 'Solitaire';
+type JuegoSeleccionado = 'BlackJack' | 'Poker' | 'Solitaire' | 'Memory';
 
 class LandingPage {
     private blackjackOption = document.getElementById('blackjack-option') as HTMLButtonElement;
     private pokerOption = document.getElementById('poker-option') as HTMLButtonElement;
     private solitaireOption = document.getElementById('solitaire-option') as HTMLButtonElement;
+    private memoryOption = document.getElementById('memory-option') as HTMLButtonElement;
     private balanceInput = document.getElementById('balance-input') as HTMLInputElement;
     private playerCountInput = document.getElementById('player-count-input') as HTMLSelectElement;
     private playerNameInput = document.getElementById('player-name-input') as HTMLInputElement;
@@ -83,12 +84,14 @@ class LandingPage {
         if (this.blackjackOption) this.blackjackOption.textContent = t.blackjack;
         if (this.pokerOption) this.pokerOption.textContent = t.poker;
         if (this.solitaireOption) this.solitaireOption.textContent = t.solitaire;
+        if (this.memoryOption) this.memoryOption.textContent = 'Memory';
     }
 
     private configurarOpcionesJuego(): void {
         this.blackjackOption.addEventListener('click', () => this.seleccionarJuego('BlackJack'));
         this.pokerOption.addEventListener('click', () => this.seleccionarJuego('Poker'));
         this.solitaireOption.addEventListener('click', () => this.seleccionarJuego('Solitaire'));
+        this.memoryOption.addEventListener('click', () => this.seleccionarJuego('Memory'));
     }
 
     private seleccionarJuego(juego: JuegoSeleccionado): void {
@@ -96,13 +99,14 @@ class LandingPage {
         this.blackjackOption.classList.toggle('selected', juego === 'BlackJack');
         this.pokerOption.classList.toggle('selected', juego === 'Poker');
         this.solitaireOption.classList.toggle('selected', juego === 'Solitaire');
+        this.memoryOption.classList.toggle('selected', juego === 'Memory');
         
-        // Ocultar opciones de jugadores y saldo para solitario
+        // Ocultar opciones de jugadores y saldo para solitario y memory
         const balanceSelection = document.querySelector('.balance-selection') as HTMLElement;
         const playerSelection = document.querySelector('.player-selection') as HTMLElement;
         const nameSelection = document.querySelector('.name-selection') as HTMLElement;
         
-        if (juego === 'Solitaire') {
+        if (juego === 'Solitaire' || juego === 'Memory') {
             if (balanceSelection) balanceSelection.style.display = 'none';
             if (playerSelection) playerSelection.style.display = 'none';
             if (nameSelection) nameSelection.style.display = 'none';
@@ -120,6 +124,12 @@ class LandingPage {
             if (this.juegoSeleccionado === 'Solitaire') {
                 const langParam = lang ? `?lang=${encodeURIComponent(lang)}` : '';
                 window.location.href = `solitaire.html${langParam}`;
+                return;
+            }
+
+            if (this.juegoSeleccionado === 'Memory') {
+                const langParam = lang ? `?lang=${encodeURIComponent(lang)}` : '';
+                window.location.href = `memory.html${langParam}`;
                 return;
             }
 

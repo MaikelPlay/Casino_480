@@ -30,7 +30,7 @@ body {
     padding: 0;
     box-sizing: border-box;
     position: relative;
-    padding-top: clamp(100px, 15vh, 130px);
+    padding-top: clamp(70px, 10vh, 90px);
     overflow: hidden;
 }
 
@@ -180,11 +180,12 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: clamp(25px, 3vh, 35px);
+    gap: clamp(12px, 1.5vh, 18px);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    padding: clamp(5px, 1vh, 10px) clamp(8px, 1.2vw, 18px) clamp(8px, 1.2vh, 15px);
+    padding: clamp(8px, 1.2vh, 12px) clamp(8px, 1.2vw, 18px) clamp(15px, 2vh, 25px);
+    justify-content: center;
 }
 
 .top-row {
@@ -194,6 +195,7 @@ body {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    align-self: center;
 }
 
 .stock-waste {
@@ -231,11 +233,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: clamp(0.9rem, 1.8vw, 1.3rem);
     color: rgba(255,215,0,0.3);
     font-weight: 700;
     background: rgba(0,0,0,0.3);
     font-family: 'Cinzel', serif;
+}
+
+/* Símbolos de palos en fundaciones - MÁS GRANDES */
+.empty-pile.empty-pile-symbol {
+    font-size: clamp(3.5rem, 7vw, 6rem) !important;
+    line-height: 1 !important;
+}
+
+/* Texto de Mazo/Descarte - mantener pequeño */
+.empty-pile.empty-pile-text {
+    font-size: clamp(0.9rem, 1.8vw, 1.3rem) !important;
 }
 
 .stock-pile {
@@ -289,15 +302,15 @@ body {
     display: flex;
     gap: clamp(6px, 1vw, 12px);
     justify-content: center;
-    flex: 1;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    align-self: center;
 }
 
 .tableau-column {
     width: clamp(80px, 10vw, 110px);
-    min-height: clamp(280px, 40vh, 350px);
+    min-height: clamp(350px, 50vh, 450px);
     position: relative;
     border-radius: 10px;
 }
@@ -690,7 +703,7 @@ body {
 
 @media (max-width: 900px) {
     .solitaire-container {
-        padding-top: 130px;
+        padding-top: 85px;
     }
     
     .game-header {
@@ -731,13 +744,13 @@ body {
     }
     
     .tableau-column {
-        min-height: 300px;
+        min-height: 380px;
     }
 }
 
 @media (max-width: 768px) {
     .solitaire-container {
-        padding-top: 120px;
+        padding-top: 80px;
     }
     
     .game-header {
@@ -775,7 +788,7 @@ body {
     }
     
     .tableau-column {
-        min-height: 280px;
+        min-height: 350px;
     }
 
     .control-button {
@@ -811,7 +824,7 @@ body {
 
 @media (max-width: 480px) {
     .solitaire-container {
-        padding-top: 110px;
+        padding-top: 75px;
     }
     
     .back-button {
@@ -869,7 +882,7 @@ body {
     
     .tableau-column {
         width: clamp(60px, 12vw, 80px);
-        min-height: 250px;
+        min-height: 320px;
     }
     
     .card {
