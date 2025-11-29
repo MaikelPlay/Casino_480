@@ -25,4 +25,5 @@ export interface GameState {
     score: number;
     moves: number;
     time: number;
+    optimalMoves: number;
 }

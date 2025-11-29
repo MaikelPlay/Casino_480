@@ -186,17 +186,16 @@ h2 {
     transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.98);
     color: white;
-    padding: clamp(6px, 1.2vh, 10px) clamp(12px, 2.5vw, 16px);
-    border-radius: 8px;
-    font-size: clamp(0.9rem, 1.8vw, 1.15rem);
-    font-weight: 800;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    font-weight: 900;
     text-align: center;
     z-index: 200;
     border: 2px solid;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 20px;
     animation: resultFadeIn 0.4s ease-out;
-    min-width: clamp(110px, 18vw, 140px);
-    white-space: nowrap;
+    min-width: 120px;
 }
 
 @keyframes resultFadeIn {
@@ -212,8 +211,8 @@ h2 {
 
 .result-notification .result-symbol {
     display: inline-block;
-    font-size: 1.15em;
-    margin-right: 5px;
+    font-size: 1.2em;
+    margin-right: 6px;
 }
 
 /* Win result - green */

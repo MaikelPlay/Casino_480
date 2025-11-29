@@ -197,6 +197,56 @@ body {
     color: #ccc;
 }
 
+.practice-mode-container {
+    margin-top: 25px;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    border: 2px solid rgba(255,215,0,0.3);
+}
+
+.practice-mode-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.practice-mode-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #ffd700;
+}
+
+.practice-mode-label span {
+    user-select: none;
+}
+
+.best-times-button {
+    margin-top: 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    padding: 12px 25px;
+    border-radius: 10px;
+    border: 2px solid #ffd700;
+    cursor: pointer;
+    font-weight: 700;
+    background: linear-gradient(145deg, #1971c2, #0c4a6e);
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+}
+
+.best-times-button:hover {
+    background: linear-gradient(145deg, #1c7ed6, #1971c2);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
 .game-board {
     margin-top: clamp(80px, 12vh, 100px);
     padding: clamp(10px, 2vh, 20px);
@@ -232,13 +282,16 @@ body {
     margin-right: auto;
 }
 
-/* Grid 8x3 - Difícil (12 parejas) - 3 filas horizontales */
+/* Grid 9x4 - Difícil (18 parejas) - 4 filas horizontales */
 .game-board.grid-5x6 {
-    grid-template-columns: repeat(8, minmax(85px, 115px));
-    grid-template-rows: repeat(3, minmax(119px, 161px));
-    max-width: min(95vw, 1000px);
+    grid-template-columns: repeat(9, minmax(70px, 95px));
+    grid-template-rows: repeat(4, minmax(98px, 133px));
+    max-width: min(95vw, 950px);
     margin-left: auto;
     margin-right: auto;
+    gap: clamp(6px, 1vw, 10px);
+    margin-top: clamp(75px, 10vh, 90px);
+    padding: clamp(8px, 1.5vh, 15px);
 }
 
 .memory-card {
@@ -395,6 +448,128 @@ body {
     color: #ffd700;
 }
 
+/* Modal de Mejores Tiempos */
+.best-times-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(10px);
+}
+
+.best-times-modal.hidden {
+    display: none;
+}
+
+.best-times-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    padding: clamp(30px, 5vh, 50px);
+    border-radius: 20px;
+    border: 4px solid #ffd700;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    text-align: center;
+    color: white;
+    animation: modalAppear 0.4s ease-out;
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.best-times-content h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: #ffd700;
+    margin: 0 0 25px 0;
+    text-shadow: 0 0 20px rgba(255,215,0,0.6);
+}
+
+.best-times-content .close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255,0,0,0.8);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.best-times-content .close-button:hover {
+    background: rgba(255,0,0,1);
+    transform: scale(1.1) rotate(90deg);
+}
+
+.best-times-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.best-times-table th {
+    background: rgba(255,215,0,0.2);
+    color: #ffd700;
+    padding: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    border-bottom: 2px solid #ffd700;
+}
+
+.best-times-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,215,0,0.2);
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+}
+
+.best-times-table tr:hover {
+    background: rgba(255,215,0,0.1);
+}
+
+.difficulty-stars {
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+
+.time-value, .moves-value {
+    color: #4ade80;
+    font-weight: 700;
+}
+
+.date-value {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.no-record {
+    color: #64748b;
+    font-style: italic;
+}
+
 @media (max-width: 1024px) {
     .game-board {
         gap: clamp(6px, 1vw, 10px);
@@ -413,9 +588,11 @@ body {
     }
     
     .game-board.grid-5x6 {
-        grid-template-columns: repeat(8, minmax(70px, 95px));
-        grid-template-rows: repeat(3, minmax(98px, 133px));
+        grid-template-columns: repeat(9, minmax(60px, 85px));
+        grid-template-rows: repeat(4, minmax(84px, 119px));
         max-width: 85vw;
+        gap: clamp(5px, 0.8vw, 8px);
+        padding: clamp(6px, 1.2vh, 12px);
     }
 }
 
@@ -449,11 +626,13 @@ body {
         max-width: 90vw;
     }
     
-    /* 8 columnas x 3 filas */
+    /* 9 columnas x 4 filas */
     .game-board.grid-5x6 {
-        grid-template-columns: repeat(8, minmax(60px, 1fr));
-        grid-template-rows: repeat(3, minmax(84px, 1fr));
+        grid-template-columns: repeat(9, minmax(50px, 1fr));
+        grid-template-rows: repeat(4, minmax(70px, 1fr));
         max-width: 90vw;
+        gap: 4px;
+        padding: 5px;
     }
 }
 
@@ -499,9 +678,11 @@ body {
         grid-template-rows: repeat(3, minmax(67px, 1fr));
     }
     
-    /* 8 columnas x 3 filas */
+    /* 9 columnas x 4 filas */
     .game-board.grid-5x6 {
-        grid-template-columns: repeat(8, minmax(50px, 1fr));
-        grid-template-rows: repeat(3, minmax(70px, 1fr));
+        grid-template-columns: repeat(9, minmax(42px, 1fr));
+        grid-template-rows: repeat(4, minmax(59px, 1fr));
+        gap: 3px;
+        padding: 4px;
     }
 }

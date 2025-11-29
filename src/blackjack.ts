@@ -2,6 +2,7 @@ import { BlackjackGame } from './blackjack/BlackjackGame.js';
 import { BlackjackUI } from './blackjack/BlackjackUI.js';
 import { initBackButton } from './backButton.js';
 import { initRulesPanel } from './rulesPanel.js';
+import { Statistics } from './common/Statistics.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -16,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize rules panel
     initRulesPanel();
+
+    // Registrar partida jugada
+    const stats = Statistics.getInstance();
+    stats.recordGamePlayed('blackjack');
 
     // Instanciar las clases de UI y Juego
     const blackjackUI = new BlackjackUI();

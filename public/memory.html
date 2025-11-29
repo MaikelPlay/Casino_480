@@ -49,9 +49,16 @@
                 <button class="difficulty-btn" data-difficulty="3">
                     <span class="stars">⭐⭐⭐</span>
                     <span class="label">Difícil</span>
-                    <span class="info">12 parejas</span>
+                    <span class="info">18 parejas</span>
                 </button>
             </div>
+            <div class="practice-mode-container">
+                <label class="practice-mode-label">
+                    <input type="checkbox" id="practice-mode" />
+                    <span>Modo Práctica (ver cartas 2 segundos)</span>
+                </label>
+            </div>
+            <button id="best-times-button" class="best-times-button">🏆 Ver Mejores Tiempos</button>
         </div>
 
         <div id="game-board" class="game-board hidden"></div>
@@ -65,6 +72,25 @@
                     <p>Tiempo: <span id="final-time"></span></p>
                 </div>
                 <button id="play-again-button" class="control-button">Jugar de Nuevo</button>
+            </div>
+        </div>
+
+        <div id="best-times-modal" class="best-times-modal hidden">
+            <div class="best-times-content">
+                <h2>🏆 Mejores Tiempos</h2>
+                <button id="close-best-times" class="close-button">✕</button>
+                <table class="best-times-table">
+                    <thead>
+                        <tr>
+                            <th>Dificultad</th>
+                            <th>Tiempo</th>
+                            <th>Movimientos</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="best-times-table-body">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

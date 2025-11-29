@@ -2,6 +2,7 @@ import { PokerGame } from './poker/PokerGame.js';
 import { PokerUI } from './poker/PokerUI.js';
 import { initBackButton } from './backButton.js';
 import { initRulesPanel } from './rulesPanel.js';
+import { Statistics } from './common/Statistics.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inicialización del juego desde los parámetros de la URL
@@ -16,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize rules panel
     initRulesPanel();
+
+    // Registrar partida jugada
+    const stats = Statistics.getInstance();
+    stats.recordGamePlayed('poker');
 
     const pokerUI = new PokerUI();
     const game = new PokerGame(pokerUI, saldoInicial, lang, nombreJugador, numeroJugadores);
