@@ -5,6 +5,7 @@ import { PokerPlayer } from './PokerPlayer.js';
 import { evaluateHand, compareEval } from './evaluator.js';
 import { simpleAI } from './ai.js';
 import { PokerUI } from './PokerUI.js';
+import { Statistics } from '../common/Statistics.js';
 
 export interface Pot {
     amount: number;
@@ -156,6 +157,12 @@ export class PokerGame {
         player.currentBet += actualChipsFromStack;
 
         this.collectChipsFromPlayer(player, actualChipsFromStack);
+        
+        // Animar fichas volando al bote
+        const playerIndex = this.players.indexOf(player);
+        if (playerIndex !== -1 && actualChipsFromStack > 0) {
+            this.ui.animateChipsToPot(playerIndex, actualChipsFromStack);
+        }
 
         if (chipsBeforeBet > 0 && player.stack === 0) {
             player.isAllIn = true;
@@ -382,6 +389,14 @@ export class PokerGame {
             this.ui.log(`${winner.name} gana el bote de ${totalWinnings}€.`);
             console.log(`[GAME] Winner by default: ${winner.name}`);
             
+            // Registrar estadísticas
+            const stats = Statistics.getInstance();
+            if (winner === this.players[0]) {
+                stats.recordGameWon('poker');
+            } else {
+                stats.recordGameLost('poker');
+            }
+            
             // Mostrar modal de victoria
             setTimeout(() => {
                 this.ui.showWinnerModal(winner.name, 'Victoria por abandono', totalWinnings);
@@ -418,6 +433,15 @@ export class PokerGame {
                 this.ui.log(`${winner.name} gana ${winAmount.toFixed(0)}€ con ${bestEval.description}!`);
                 console.log(`[GAME] Winner: ${winner.name} with ${bestEval.description}`);
             });
+            
+            // Registrar estadísticas para el jugador humano (índice 0)
+            const stats = Statistics.getInstance();
+            const humanPlayer = this.players[0];
+            if (winners.includes(humanPlayer)) {
+                stats.recordGameWon('poker');
+            } else if (humanPlayer.inHand) {
+                stats.recordGameLost('poker');
+            }
             
             // Mostrar modal de victoria (solo para el primer ganador si hay empate)
             setTimeout(() => {

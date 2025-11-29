@@ -49,6 +49,9 @@ export class PokerUI {
                 const value = parseInt((btn as HTMLElement).getAttribute('data-value') || '0', 10);
                 this.currentBetAmount += value;
                 this.updateBetDisplay();
+                
+                // Reproducir sonido de ficha
+                this.soundEffects.playChip();
             });
         });
 
@@ -57,6 +60,9 @@ export class PokerUI {
         clearBtn?.addEventListener('click', () => {
             this.currentBetAmount = 0;
             this.updateBetDisplay();
+            
+            // Reproducir sonido de clic
+            this.soundEffects.playClick();
         });
     }
 
@@ -496,6 +502,70 @@ export class PokerUI {
             };
             
             continueBtn.addEventListener('click', handleContinue);
+        }
+    }
+
+    animateChipsToPot(playerIndex: number, amount: number): void {
+        const playerArea = document.getElementById(`player-area-${playerIndex}`);
+        const potElement = document.getElementById('pot');
+        
+        if (!playerArea || !potElement) return;
+
+        const playerRect = playerArea.getBoundingClientRect();
+        const potRect = potElement.getBoundingClientRect();
+
+        // Determinar color de ficha según cantidad
+        let chipClass = 'chip-red';
+        if (amount >= 100) chipClass = 'chip-gold';
+        else if (amount >= 50) chipClass = 'chip-blue';
+        else if (amount >= 20) chipClass = 'chip-green';
+
+        // Crear 3-5 fichas animadas
+        const numChips = Math.min(5, Math.max(3, Math.floor(amount / 20)));
+        
+        for (let i = 0; i < numChips; i++) {
+            setTimeout(() => {
+                const chip = document.createElement('div');
+                chip.className = `flying-chip ${chipClass}`;
+                
+                // Posición inicial (desde el jugador)
+                chip.style.left = `${playerRect.left + playerRect.width / 2}px`;
+                chip.style.top = `${playerRect.top + playerRect.height / 2}px`;
+                
+                // Calcular posición final (al bote)
+                const targetX = potRect.left + potRect.width / 2;
+                const targetY = potRect.top + potRect.height / 2;
+                
+                chip.style.setProperty('--target-x', `${targetX - (playerRect.left + playerRect.width / 2)}px`);
+                chip.style.setProperty('--target-y', `${targetY - (playerRect.top + playerRect.height / 2)}px`);
+                
+                document.body.appendChild(chip);
+                
+                // Animar hacia el bote
+                chip.animate([
+                    { 
+                        transform: 'translate(0, 0) scale(1) rotate(0deg)',
+                        opacity: 1
+                    },
+                    { 
+                        transform: `translate(${targetX - (playerRect.left + playerRect.width / 2)}px, ${targetY - (playerRect.top + playerRect.height / 2)}px) scale(0.3) rotate(360deg)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: 800,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+                
+                // Eliminar después de la animación
+                setTimeout(() => {
+                    chip.remove();
+                    if (i === numChips - 1) {
+                        // Animar el bote al recibir la última ficha
+                        potElement.classList.add('receiving-chips');
+                        setTimeout(() => potElement.classList.remove('receiving-chips'), 500);
+                    }
+                }, 800);
+            }, i * 100);
         }
     }
 

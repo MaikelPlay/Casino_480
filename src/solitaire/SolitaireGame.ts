@@ -18,6 +18,7 @@ export class SolitaireGame {
     private moveHistory: Move[] = [];
     private score: number = 0;
     private moveCount: number = 0;
+    private optimalMoves: number = 0;
     private startTime: number = 0;
     private timerInterval: number | null = null;
     private ui: IGameUI;
@@ -60,11 +61,29 @@ export class SolitaireGame {
             }
         }
 
+        // Calcular movimientos óptimos
+        this.calculateOptimalMoves();
+
         // Iniciar timer
         this.startTimer();
 
         // Renderizar
         this.ui.render(this.getGameState());
+    }
+
+    private calculateOptimalMoves(): void {
+        // Movimientos óptimos = 52 cartas a fundaciones + cartas boca abajo a voltear
+        let faceDownCards = 0;
+        for (let col = 0; col < 7; col++) {
+            for (let row = 0; row < this.tableau[col].length; row++) {
+                if (!this.tableau[col][row].faceUp) {
+                    faceDownCards++;
+                }
+            }
+        }
+        // 52 movimientos para llevar todas las cartas a fundaciones
+        // + cartas boca abajo que se voltearán automáticamente
+        this.optimalMoves = 52 + faceDownCards;
     }
 
     private startTimer(): void {
@@ -470,6 +489,66 @@ export class SolitaireGame {
         }
     }
 
+    public canAutoComplete(): boolean {
+        // Verificar si todas las cartas del tableau están boca arriba
+        const allTableauRevealed = this.tableau.every(column => 
+            column.every(card => card.faceUp)
+        );
+        
+        // Verificar si el stock está vacío
+        const stockEmpty = this.stock.length === 0;
+        
+        return allTableauRevealed && stockEmpty;
+    }
+
+    public autoComplete(): void {
+        if (!this.canAutoComplete()) return;
+
+        let moved = true;
+        let iterations = 0;
+        const maxIterations = 100; // Prevenir bucles infinitos
+
+        while (moved && iterations < maxIterations) {
+            moved = false;
+            iterations++;
+
+            // Intentar mover desde waste
+            if (this.waste.length > 0) {
+                const wasteCard = this.waste[this.waste.length - 1];
+                for (let i = 0; i < 4; i++) {
+                    if (this.canMoveToFoundation(wasteCard, i)) {
+                        this.moveToFoundation(wasteCard, 'waste', 0, this.waste.length - 1);
+                        moved = true;
+                        break;
+                    }
+                }
+            }
+
+            // Intentar mover desde tableau
+            if (!moved) {
+                for (let col = 0; col < 7; col++) {
+                    const column = this.tableau[col];
+                    if (column.length > 0) {
+                        const topCard = column[column.length - 1].card;
+                        for (let i = 0; i < 4; i++) {
+                            if (this.canMoveToFoundation(topCard, i)) {
+                                this.moveToFoundation(topCard, 'tableau', col, column.length - 1);
+                                moved = true;
+                                break;
+                            }
+                        }
+                        if (moved) break;
+                    }
+                }
+            }
+
+            // Pequeña pausa para visualizar los movimientos
+            if (moved) {
+                this.ui.render(this.getGameState());
+            }
+        }
+    }
+
     public getGameState(): GameState {
         return {
             stock: this.stock,
@@ -478,7 +557,8 @@ export class SolitaireGame {
             tableau: this.tableau,
             score: this.score,
             moves: this.moveCount,
-            time: this.getElapsedTime()
+            time: this.getElapsedTime(),
+            optimalMoves: this.optimalMoves
         };
     }
 

@@ -18,7 +18,9 @@ export class MemoryUI {
         difficultyButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const difficulty = parseInt(btn.getAttribute('data-difficulty') || '1');
-                this.startGame(difficulty);
+                const practiceModeCheckbox = document.getElementById('practice-mode') as HTMLInputElement;
+                const practiceMode = practiceModeCheckbox?.checked || false;
+                this.startGame(difficulty, practiceMode);
             });
         });
 
@@ -34,12 +36,24 @@ export class MemoryUI {
             this.hideWin();
             this.showDifficultySelector();
         });
+
+        // Botón ver mejores tiempos
+        const bestTimesBtn = document.getElementById('best-times-button');
+        bestTimesBtn?.addEventListener('click', () => {
+            this.showBestTimes();
+        });
+
+        // Botón cerrar mejores tiempos
+        const closeBestTimesBtn = document.getElementById('close-best-times');
+        closeBestTimesBtn?.addEventListener('click', () => {
+            this.hideBestTimes();
+        });
     }
 
-    private startGame(difficulty: number): void {
+    private startGame(difficulty: number, practiceMode: boolean = false): void {
         this.previousMatchedIds.clear();
         this.hideDifficultySelector();
-        this.game?.startGame(difficulty);
+        this.game?.startGame(difficulty, practiceMode);
     }
 
     private showDifficultySelector(): void {
@@ -163,5 +177,73 @@ export class MemoryUI {
     private hideWin(): void {
         const winMessage = document.getElementById('win-message');
         if (winMessage) winMessage.classList.add('hidden');
+    }
+
+    private showBestTimes(): void {
+        const modal = document.getElementById('best-times-modal');
+        if (!modal || !this.game) return;
+
+        // Obtener mejores tiempos para cada dificultad
+        const difficulties = [
+            { level: 1, name: 'Fácil', stars: '⭐' },
+            { level: 2, name: 'Medio', stars: '⭐⭐' },
+            { level: 3, name: 'Difícil', stars: '⭐⭐⭐' }
+        ];
+
+        const tableBody = document.getElementById('best-times-table-body');
+        if (!tableBody) return;
+
+        tableBody.innerHTML = '';
+
+        difficulties.forEach(diff => {
+            const bestTime = this.game?.getBestTime(diff.level);
+            const row = document.createElement('tr');
+            
+            const diffCell = document.createElement('td');
+            diffCell.innerHTML = `<span class="difficulty-stars">${diff.stars}</span> ${diff.name}`;
+            row.appendChild(diffCell);
+
+            const timeCell = document.createElement('td');
+            if (bestTime) {
+                const minutes = Math.floor(bestTime.time / 60);
+                const secs = bestTime.time % 60;
+                timeCell.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+                timeCell.classList.add('time-value');
+            } else {
+                timeCell.textContent = '-';
+                timeCell.classList.add('no-record');
+            }
+            row.appendChild(timeCell);
+
+            const movesCell = document.createElement('td');
+            if (bestTime) {
+                movesCell.textContent = bestTime.moves.toString();
+                movesCell.classList.add('moves-value');
+            } else {
+                movesCell.textContent = '-';
+                movesCell.classList.add('no-record');
+            }
+            row.appendChild(movesCell);
+
+            const dateCell = document.createElement('td');
+            if (bestTime) {
+                const date = new Date(bestTime.date);
+                dateCell.textContent = date.toLocaleDateString('es-ES');
+                dateCell.classList.add('date-value');
+            } else {
+                dateCell.textContent = '-';
+                dateCell.classList.add('no-record');
+            }
+            row.appendChild(dateCell);
+
+            tableBody.appendChild(row);
+        });
+
+        modal.classList.remove('hidden');
+    }
+
+    private hideBestTimes(): void {
+        const modal = document.getElementById('best-times-modal');
+        if (modal) modal.classList.add('hidden');
     }
 }

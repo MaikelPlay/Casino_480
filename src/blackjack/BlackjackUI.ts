@@ -1,6 +1,7 @@
 import { Carta } from '../common/Card.js';
 import type { BlackjackEstadoJuego } from './types.js';
 import { SoundEffects } from '../common/SoundEffects.js';
+import { Statistics } from '../common/Statistics.js';
 
 /**
  * Manages the User Interface for the Blackjack game.
@@ -268,6 +269,8 @@ export class BlackjackUI {
             mensaje = `+${cantidad}€`;
             simbolo = '✓';
             this.soundEffects.playWin();
+            // Animar fichas moviéndose hacia el jugador
+            this.animarPagoFichas(jugadorIndex, cantidad);
         } else if (resultado === 'lose') {
             mensaje = `-${cantidad}€`;
             simbolo = '✗';
@@ -280,6 +283,75 @@ export class BlackjackUI {
 
         notification.innerHTML = `<span class="result-symbol">${simbolo}</span> ${mensaje}`;
         playerArea.appendChild(notification);
+
+        // Registrar estadísticas solo para el jugador humano (índice 0)
+        if (jugadorIndex === 0) {
+            const stats = Statistics.getInstance();
+            if (resultado === 'win') {
+                stats.recordGameWon('blackjack');
+            } else if (resultado === 'lose') {
+                stats.recordGameLost('blackjack');
+            }
+            // No registramos empates como victoria ni derrota
+        }
+    }
+
+    /**
+     * Anima fichas moviéndose desde el centro hacia el área del jugador
+     * @param jugadorIndex El índice del jugador que gana
+     * @param cantidad La cantidad ganada (determina el número de fichas)
+     */
+    private animarPagoFichas(jugadorIndex: number, cantidad: number): void {
+        const playerArea = document.getElementById(`player-area-${jugadorIndex}`);
+        if (!playerArea) return;
+
+        // Calcular número de fichas a animar (máximo 10 para no saturar)
+        const numFichas = Math.min(Math.ceil(cantidad / 10), 10);
+        
+        // Obtener posición del área del jugador
+        const playerRect = playerArea.getBoundingClientRect();
+        const targetX = playerRect.left + playerRect.width / 2;
+        const targetY = playerRect.top + playerRect.height / 2;
+
+        // Posición inicial (centro de la pantalla)
+        const startX = window.innerWidth / 2;
+        const startY = window.innerHeight / 2;
+
+        // Crear y animar cada ficha
+        for (let i = 0; i < numFichas; i++) {
+            setTimeout(() => {
+                this.crearFichaAnimada(startX, startY, targetX, targetY);
+            }, i * 100); // Delay escalonado entre fichas
+        }
+    }
+
+    /**
+     * Crea una ficha animada que se mueve desde el punto inicial al punto final
+     */
+    private crearFichaAnimada(startX: number, startY: number, targetX: number, targetY: number): void {
+        const ficha = document.createElement('div');
+        ficha.classList.add('chip-animation');
+        
+        // Posición inicial
+        ficha.style.left = `${startX}px`;
+        ficha.style.top = `${startY}px`;
+        
+        document.body.appendChild(ficha);
+
+        // Reproducir sonido de ficha
+        this.soundEffects.playChip();
+
+        // Animar hacia el destino
+        setTimeout(() => {
+            ficha.style.left = `${targetX}px`;
+            ficha.style.top = `${targetY}px`;
+            ficha.style.opacity = '0';
+        }, 50);
+
+        // Eliminar después de la animación
+        setTimeout(() => {
+            ficha.remove();
+        }, 800);
     }
 
     /**

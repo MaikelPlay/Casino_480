@@ -114,7 +114,7 @@ body {
     justify-content: center;
 }
 
-.score-display, .moves-display, .time-display {
+.score-display, .moves-display, .time-display, .efficiency-display {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -122,7 +122,7 @@ body {
     flex-shrink: 0;
 }
 
-.score-display .label, .moves-display .label, .time-display .label {
+.score-display .label, .moves-display .label, .time-display .label, .efficiency-display .label {
     font-size: clamp(0.65rem, 1.3vw, 0.8rem);
     color: #ffd700;
     font-family: 'Cinzel', serif;
@@ -131,13 +131,14 @@ body {
     white-space: nowrap;
 }
 
-.score-display .value, .moves-display .value, .time-display .value {
+.score-display .value, .moves-display .value, .time-display .value, .efficiency-display .value {
     font-size: clamp(1.1rem, 2.2vw, 1.5rem);
     color: #fff;
     font-family: 'Cinzel', serif;
     font-weight: 800;
     text-shadow: 0 0 10px rgba(255,215,0,0.5);
     white-space: nowrap;
+    transition: color 0.3s ease;
 }
 
 .game-controls {
@@ -965,5 +966,34 @@ body {
     }
     100% {
         opacity: 1;
+    }
+}
+
+/* Animación de celebración de victoria */
+.card.victory-bounce {
+    animation: victoryBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes victoryBounce {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    25% {
+        transform: translateY(-40px) scale(1.15) rotate(5deg);
+    }
+    40% {
+        transform: translateY(-60px) scale(1.2) rotate(-5deg);
+    }
+    55% {
+        transform: translateY(-40px) scale(1.15) rotate(3deg);
+    }
+    70% {
+        transform: translateY(-20px) scale(1.1) rotate(-2deg);
+    }
+    85% {
+        transform: translateY(-10px) scale(1.05) rotate(1deg);
+    }
+    100% {
+        transform: translateY(0) scale(1) rotate(0deg);
     }
 }

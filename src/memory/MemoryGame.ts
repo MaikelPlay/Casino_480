@@ -1,6 +1,7 @@
 import { Baraja } from '../common/Deck.js';
 import { Carta } from '../common/Card.js';
 import { MemoryCard, GameState } from './types.js';
+import { Statistics } from '../common/Statistics.js';
 
 interface IGameUI {
     render(state: GameState): void;
@@ -19,20 +20,22 @@ export class MemoryGame {
     private timerInterval: number | null = null;
     private ui: IGameUI;
     private isProcessing: boolean = false;
+    private practiceMode: boolean = false;
 
     constructor(ui: IGameUI) {
         this.ui = ui;
     }
 
-    public startGame(difficulty: number): void {
+    public startGame(difficulty: number, practiceMode: boolean = false): void {
         this.difficulty = difficulty;
         this.moves = 0;
         this.pairs = 0;
         this.flippedCards = [];
         this.isProcessing = false;
+        this.practiceMode = practiceMode;
 
         // Determinar número de parejas según dificultad
-        const pairsCount = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 12;
+        const pairsCount = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 18;
         this.totalPairs = pairsCount;
 
         // Crear cartas
@@ -43,6 +46,27 @@ export class MemoryGame {
 
         // Renderizar
         this.ui.render(this.getGameState());
+
+        // Modo práctica: mostrar todas las cartas por 2 segundos
+        if (practiceMode) {
+            this.showAllCardsForPractice();
+        }
+    }
+
+    private showAllCardsForPractice(): void {
+        // Voltear todas las cartas temporalmente
+        this.cards.forEach(card => {
+            card.isFlipped = true;
+        });
+        this.ui.render(this.getGameState());
+
+        // Después de 2 segundos, voltear todas de nuevo
+        setTimeout(() => {
+            this.cards.forEach(card => {
+                card.isFlipped = false;
+            });
+            this.ui.render(this.getGameState());
+        }, 2000);
     }
 
     private createCards(pairsCount: number): void {
@@ -155,7 +179,50 @@ export class MemoryGame {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
-        this.ui.showWin(this.moves, this.getElapsedTime());
+        const time = this.getElapsedTime();
+        
+        // Guardar mejor tiempo si no es modo práctica
+        if (!this.practiceMode) {
+            this.saveBestTime(time, this.moves);
+        }
+        
+        this.ui.showWin(this.moves, time);
+        
+        // Registrar victoria en estadísticas
+        const stats = Statistics.getInstance();
+        stats.recordGameWon('memory', undefined, time);
+    }
+
+    private saveBestTime(time: number, moves: number): void {
+        const key = `memory_best_time_${this.difficulty}`;
+        const existingBest = localStorage.getItem(key);
+        
+        if (existingBest) {
+            const bestTime = JSON.parse(existingBest);
+            // Solo guardar si es mejor tiempo (menor)
+            if (time < bestTime.time) {
+                const newBest = {
+                    time,
+                    moves,
+                    date: new Date().toISOString()
+                };
+                localStorage.setItem(key, JSON.stringify(newBest));
+            }
+        } else {
+            // Primera vez, guardar directamente
+            const newBest = {
+                time,
+                moves,
+                date: new Date().toISOString()
+            };
+            localStorage.setItem(key, JSON.stringify(newBest));
+        }
+    }
+
+    public getBestTime(difficulty: number): { time: number; moves: number; date: string } | null {
+        const key = `memory_best_time_${difficulty}`;
+        const bestTime = localStorage.getItem(key);
+        return bestTime ? JSON.parse(bestTime) : null;
     }
 
     public getGameState(): GameState {

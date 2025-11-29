@@ -1,6 +1,7 @@
 import { Carta } from '../common/Card.js';
 import { GameState } from './types.js';
 import { SolitaireGame } from './SolitaireGame.js';
+import { Statistics } from '../common/Statistics.js';
 
 export class SolitaireUI {
     private game: SolitaireGame | null = null;
@@ -48,6 +49,12 @@ export class SolitaireUI {
             this.showHint();
         });
 
+        // Auto-complete button
+        const autoCompleteBtn = document.getElementById('auto-complete-button');
+        autoCompleteBtn?.addEventListener('click', () => {
+            this.game?.autoComplete();
+        });
+
         // Play again button
         const playAgainBtn = document.getElementById('play-again-button');
         playAgainBtn?.addEventListener('click', () => {
@@ -64,7 +71,9 @@ export class SolitaireUI {
         this.updateScore(state.score);
         this.updateMoves(state.moves);
         this.updateTime(state.time);
+        this.updateEfficiency(state.moves, state.optimalMoves);
         this.updateUndoButton(state.moves > 0);
+        this.updateAutoCompleteButton();
     }
 
     private renderStock(stock: Carta[]): void {
@@ -392,6 +401,25 @@ export class SolitaireUI {
         }
     }
 
+    public updateEfficiency(moves: number, optimalMoves: number): void {
+        const efficiencyEl = document.getElementById('efficiency');
+        if (efficiencyEl && optimalMoves > 0) {
+            const efficiency = Math.max(0, Math.min(100, Math.round((optimalMoves / Math.max(moves, 1)) * 100)));
+            efficiencyEl.textContent = `${efficiency}%`;
+            
+            // Cambiar color según eficiencia
+            if (efficiency >= 90) {
+                efficiencyEl.style.color = '#00ff00';
+            } else if (efficiency >= 70) {
+                efficiencyEl.style.color = '#ffd700';
+            } else if (efficiency >= 50) {
+                efficiencyEl.style.color = '#ffa500';
+            } else {
+                efficiencyEl.style.color = '#ff6b6b';
+            }
+        }
+    }
+
     public updateTime(seconds: number): void {
         const timeEl = document.getElementById('time');
         if (timeEl) {
@@ -408,23 +436,58 @@ export class SolitaireUI {
         }
     }
 
+    public updateAutoCompleteButton(): void {
+        const autoCompleteBtn = document.getElementById('auto-complete-button') as HTMLButtonElement;
+        if (autoCompleteBtn && this.game) {
+            autoCompleteBtn.disabled = !this.game.canAutoComplete();
+        }
+    }
+
     public showWin(score: number, moves: number, time: number): void {
-        const winMessage = document.getElementById('win-message');
-        const finalScore = document.getElementById('final-score');
-        const finalMoves = document.getElementById('final-moves');
-        const finalTime = document.getElementById('final-time');
+        // Primero, animar las cartas saltando
+        this.celebrateWin();
 
-        if (finalScore) finalScore.textContent = score.toString();
-        if (finalMoves) finalMoves.textContent = moves.toString();
-        if (finalTime) {
-            const minutes = Math.floor(time / 60);
-            const secs = time % 60;
-            finalTime.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
-        }
+        // Después de la animación, mostrar el mensaje de victoria
+        setTimeout(() => {
+            const winMessage = document.getElementById('win-message');
+            const finalScore = document.getElementById('final-score');
+            const finalMoves = document.getElementById('final-moves');
+            const finalTime = document.getElementById('final-time');
 
-        if (winMessage) {
-            winMessage.classList.remove('hidden');
-        }
+            if (finalScore) finalScore.textContent = score.toString();
+            if (finalMoves) finalMoves.textContent = moves.toString();
+            if (finalTime) {
+                const minutes = Math.floor(time / 60);
+                const secs = time % 60;
+                finalTime.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            if (winMessage) {
+                winMessage.classList.remove('hidden');
+            }
+
+            // Registrar victoria en estadísticas
+            const stats = Statistics.getInstance();
+            stats.recordGameWon('solitaire', score, time);
+        }, 2000);
+    }
+
+    private celebrateWin(): void {
+        // Obtener todas las cartas de las fundaciones
+        const foundations = document.querySelectorAll('.foundation-pile');
+        
+        foundations.forEach((foundation, foundationIndex) => {
+            const cards = foundation.querySelectorAll('.card');
+            
+            cards.forEach((card, cardIndex) => {
+                // Agregar animación de salto con delay escalonado
+                const delay = (foundationIndex * 13 + cardIndex) * 30; // 30ms entre cada carta
+                setTimeout(() => {
+                    (card as HTMLElement).classList.add('victory-bounce');
+                    this.playSound('cardToFoundation');
+                }, delay);
+            });
+        });
     }
 
     public hideWin(): void {

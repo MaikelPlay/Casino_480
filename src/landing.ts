@@ -11,6 +11,10 @@ class LandingPage {
     private playerNameInput = document.getElementById('player-name-input') as HTMLInputElement;
     private languageSelect = document.getElementById('language-select') as HTMLSelectElement;
     private startGameButton = document.getElementById('start-game-button') as HTMLButtonElement;
+    private statsButton = document.getElementById('stats-button') as HTMLButtonElement;
+    private statsModal = document.getElementById('stats-modal') as HTMLElement;
+    private closeStatsButton = document.getElementById('close-stats') as HTMLButtonElement;
+    private resetStatsButton = document.getElementById('reset-stats') as HTMLButtonElement;
 
     private juegoSeleccionado: JuegoSeleccionado = 'BlackJack';
 
@@ -18,6 +22,7 @@ class LandingPage {
         this.configurarOpcionesJuego();
         this.configurarBotonInicio();
         this.configurarSelectorIdioma();
+        this.configurarEstadisticas();
         this.applyTranslations();
     }
 
@@ -152,6 +157,75 @@ class LandingPage {
                 window.location.href = `poker.html?saldo=${saldoInicial}&jugadores=${numeroJugadores}${nombreParam}${langParam}`;
             }
         });
+    }
+
+    private configurarEstadisticas(): void {
+        // Importar dinámicamente el módulo de estadísticas
+        import('./common/Statistics.js').then(({ Statistics }) => {
+            const stats = Statistics.getInstance();
+
+            // Abrir modal
+            this.statsButton?.addEventListener('click', () => {
+                this.mostrarEstadisticas(stats);
+                this.statsModal?.classList.remove('hidden');
+            });
+
+            // Cerrar modal
+            this.closeStatsButton?.addEventListener('click', () => {
+                this.statsModal?.classList.add('hidden');
+            });
+
+            // Cerrar al hacer clic fuera del contenido
+            this.statsModal?.addEventListener('click', (e) => {
+                if (e.target === this.statsModal) {
+                    this.statsModal.classList.add('hidden');
+                }
+            });
+
+            // Resetear estadísticas
+            this.resetStatsButton?.addEventListener('click', () => {
+                if (confirm('¿Estás seguro de que quieres resetear todas las estadísticas?')) {
+                    stats.resetStats();
+                    this.mostrarEstadisticas(stats);
+                }
+            });
+        });
+    }
+
+    private mostrarEstadisticas(stats: any): void {
+        const allStats = stats.getStats();
+
+        // Blackjack
+        this.actualizarStat('bj-played', allStats.blackjack.gamesPlayed);
+        this.actualizarStat('bj-won', allStats.blackjack.gamesWon);
+        this.actualizarStat('bj-lost', allStats.blackjack.gamesLost);
+        this.actualizarStat('bj-winrate', stats.getWinRate('blackjack').toFixed(1) + '%');
+
+        // Poker
+        this.actualizarStat('poker-played', allStats.poker.gamesPlayed);
+        this.actualizarStat('poker-won', allStats.poker.gamesWon);
+        this.actualizarStat('poker-lost', allStats.poker.gamesLost);
+        this.actualizarStat('poker-winrate', stats.getWinRate('poker').toFixed(1) + '%');
+
+        // Solitaire
+        this.actualizarStat('solitaire-played', allStats.solitaire.gamesPlayed);
+        this.actualizarStat('solitaire-won', allStats.solitaire.gamesWon);
+        this.actualizarStat('solitaire-winrate', stats.getWinRate('solitaire').toFixed(1) + '%');
+        this.actualizarStat('solitaire-best', allStats.solitaire.bestScore);
+        this.actualizarStat('solitaire-time', stats.formatTime(allStats.solitaire.bestTime));
+
+        // Memory
+        this.actualizarStat('memory-played', allStats.memory.gamesPlayed);
+        this.actualizarStat('memory-won', allStats.memory.gamesWon);
+        this.actualizarStat('memory-winrate', stats.getWinRate('memory').toFixed(1) + '%');
+        this.actualizarStat('memory-time', stats.formatTime(allStats.memory.bestTime));
+    }
+
+    private actualizarStat(id: string, value: string | number): void {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value.toString();
+        }
     }
 }
 

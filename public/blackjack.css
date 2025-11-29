@@ -98,3 +98,64 @@
     background: rgba(255, 0, 0, 1);
     transform: scale(1.15);
 }
+
+
+/* Animación de Fichas de Pago */
+.chip-animation {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle at 30% 30%, #ffd700, #ff8c00, #ff6b00);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6), 
+                inset 0 2px 5px rgba(255, 255, 255, 0.5),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.chip-animation::before {
+    content: '€';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    font-family: 'Cinzel', serif;
+}
+
+.chip-animation::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+}
+
+/* Animación de rotación durante el movimiento */
+@keyframes chipRotate {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg) scale(0.8);
+    }
+}
+
+.chip-animation {
+    animation: chipRotate 0.7s ease-in-out;
+}

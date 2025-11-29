@@ -15,3 +15,9 @@ export interface GameState {
     time: number;
     difficulty: number;
 }
+
+export interface BestTime {
+    time: number;
+    moves: number;
+    date: string;
+}

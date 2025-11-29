@@ -52,5 +52,107 @@
         </div>
         <button id="start-game-button">Empezar a Jugar</button>
     </div>
+    
+    <button id="stats-button" class="stats-button-floating">📊 Estadísticas</button>
+
+    <!-- Modal de Estadísticas -->
+    <div id="stats-modal" class="stats-modal hidden">
+        <div class="stats-content">
+            <button id="close-stats" class="close-stats">✕</button>
+            <h2>📊 Estadísticas Globales</h2>
+            
+            <div class="stats-grid">
+                <!-- Blackjack -->
+                <div class="game-stats-card">
+                    <h3>🃏 Blackjack</h3>
+                    <div class="stat-row">
+                        <span>Partidas:</span>
+                        <span id="bj-played">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Ganadas:</span>
+                        <span id="bj-won" class="stat-won">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Perdidas:</span>
+                        <span id="bj-lost" class="stat-lost">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>% Victoria:</span>
+                        <span id="bj-winrate" class="stat-highlight">0%</span>
+                    </div>
+                </div>
+
+                <!-- Poker -->
+                <div class="game-stats-card">
+                    <h3>🎰 Poker</h3>
+                    <div class="stat-row">
+                        <span>Partidas:</span>
+                        <span id="poker-played">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Ganadas:</span>
+                        <span id="poker-won" class="stat-won">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Perdidas:</span>
+                        <span id="poker-lost" class="stat-lost">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>% Victoria:</span>
+                        <span id="poker-winrate" class="stat-highlight">0%</span>
+                    </div>
+                </div>
+
+                <!-- Solitario -->
+                <div class="game-stats-card">
+                    <h3>♠️ Solitario</h3>
+                    <div class="stat-row">
+                        <span>Partidas:</span>
+                        <span id="solitaire-played">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Ganadas:</span>
+                        <span id="solitaire-won" class="stat-won">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>% Victoria:</span>
+                        <span id="solitaire-winrate" class="stat-highlight">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Mejor Puntuación:</span>
+                        <span id="solitaire-best" class="stat-highlight">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Mejor Tiempo:</span>
+                        <span id="solitaire-time">0:00</span>
+                    </div>
+                </div>
+
+                <!-- Memory -->
+                <div class="game-stats-card">
+                    <h3>🧠 Memory</h3>
+                    <div class="stat-row">
+                        <span>Partidas:</span>
+                        <span id="memory-played">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Completadas:</span>
+                        <span id="memory-won" class="stat-won">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>% Completado:</span>
+                        <span id="memory-winrate" class="stat-highlight">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Mejor Tiempo:</span>
+                        <span id="memory-time">0:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="reset-stats" class="reset-stats-button">Resetear Estadísticas</button>
+        </div>
+    </div>
 </body>
 </html>
